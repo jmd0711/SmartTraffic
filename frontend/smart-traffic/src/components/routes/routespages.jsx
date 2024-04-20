@@ -5,12 +5,16 @@ import CCTV from "../cctv/cctv"
 import Drone from "../drone/drone"
 import IoT from "../iot/iot"
 import PrivateRoutes from "./privateroutes"
+import Login from "../user/login"
+import Register from "../user/register"
 
 class RoutePages extends Component {
   render () {
     return (
       <Routes>
         <Route path="/" element={<Dashboard />}/>
+        <Route path="/login" element={<Login />}/>
+        <Route path="/register" element={<Register />}/>
         <Route element={<PrivateRoutes />}>
           <Route path="/cctv" element={<CCTV />}/>
           <Route path="/drone" element={<Drone />}/>
