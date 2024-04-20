@@ -15,9 +15,13 @@ class Login extends Component {
     }
 
     onChange(e) {
+        this.setState({ [e.target.name]: e.target.value })
     }
 
     onSubmit(e) {
+        //Temporary login
+        localStorage.setItem("userToken", this.state.username)
+        this.props.navigate('/')
     }
 
     render() {
