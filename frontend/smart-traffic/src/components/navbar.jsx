@@ -24,7 +24,7 @@ class NavBar extends Component {
           <Nav.Link href="/cctv">CCTV</Nav.Link>
           <Nav.Link href="/drone">Drone</Nav.Link>
           <Nav.Link href="/iot">IoT</Nav.Link>
-          <Nav.Link href="/" onClick={this.logOut.bind(this)}>Logout</Nav.Link>
+          <Nav.Link href="/" onClick={this.logOut.bind(this)}>Log Out</Nav.Link>
         </Nav>
       </div>
     )
