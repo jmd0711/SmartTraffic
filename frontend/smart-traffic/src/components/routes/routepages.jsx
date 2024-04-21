@@ -6,7 +6,7 @@ import Drone from "../drone/drone"
 import IoT from "../iot/iot"
 import PrivateRoutes from "./privateroutes"
 import Login from "../user/login"
-import Register from "../user/register"
+import Register from "../user/signup"
 
 class RoutePages extends Component {
   render () {
