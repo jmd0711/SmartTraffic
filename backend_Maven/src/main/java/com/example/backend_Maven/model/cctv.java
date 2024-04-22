@@ -3,28 +3,37 @@ package com.example.backend_Maven.model;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import org.springframework.data.annotation.Id;
+
+
 //CREATE TABLE cctv (
 //id INT AUTO_INCREMENT PRIMARY KEY,
+//locationName VARCHAR(255),
 //nearby_place VARCHAR(255),
-//camera_name VARCHAR(255),
-//camera_link VARCHAR(3000),
-//route VARCHAR(255),
-//county VARCHAR(255)
+//longitude VARCHAR(100),
+//latitude VARCHAR(100),
+//inService VARCHAR(35),
+//streamingVideoURL VARCHAR(3000),
+//currentImageURL VARCHAR(3000)
 //);
+
 public class cctv {
     @Id
-    @GeneratedValue(strategy= GenerationType.AUTO)
+    @GeneratedValue(strategy=GenerationType.AUTO)
     private Integer id;
 
-    private String route;
+    private String locationName;
 
-    private String county;
+    private String nearby_place;
 
-    private String nearby; //nearby_place
+    private String longitude;
 
-    private String stream; //camera_link
+    private String latitude;
 
-    private String url; //camera_link
+    private String inService;
+
+    private String videoUrl; //camera_link
+
+    private String imageUrl;
 
     public Integer getId() {
         return id;
@@ -34,43 +43,59 @@ public class cctv {
         this.id = id;
     }
 
-    public String getRoute() {
-        return route;
+    public String getLocationName() {
+        return locationName;
     }
 
-    public void setRoute(String name) {
-        this.route = route;
+    public void setLocationName(String locationName) {
+        this.locationName = locationName;
     }
 
-    public String getCounty() {
-        return county;
+    public String getNearby_place() {
+        return nearby_place;
     }
 
-    public void setCounty(String county) {
-        this.county = county;
+    public void setNearby_place(String nearby_place) {
+        this.nearby_place = nearby_place;
     }
 
-    public String getNearby() {
-        return nearby;
+    public String getLongitude() {
+        return longitude;
     }
 
-    public void setNearby(String nearby) {
-        this.nearby = nearby;
+    public void setLongitude(String longitude) {
+        this.longitude = longitude;
     }
 
-    public String getStream() {
-        return stream;
+    public String getLatitude() {
+        return latitude;
     }
 
-    public void setStream(String stream) {
-        this.stream = stream;
+    public void setLatitude(String latitude) {
+        this.latitude = latitude;
     }
 
-    public String getUrl() {
-        return url;
+    public String getInService() {
+        return inService;
     }
 
-    public void setUrl(String url) {
-        this.url = url;
+    public void setInService(String inService) {
+        this.inService = inService;
+    }
+
+    public String getVideoUrl() {
+        return videoUrl;
+    }
+
+    public void setVideoUrl(String videoUrl) {
+        this.videoUrl = videoUrl;
+    }
+
+    public String getImageUrl() {
+        return imageUrl;
+    }
+
+    public void setImageUrl(String imageUrl) {
+        this.imageUrl = imageUrl;
     }
 }
