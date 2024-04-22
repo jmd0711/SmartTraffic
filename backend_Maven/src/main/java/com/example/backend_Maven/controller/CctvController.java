@@ -26,8 +26,8 @@ public class CctvController {
         return cctvService.getAllCctv();
     }
 
-    @RequestMapping("/{id}")
-    public Optional<Cctv> getById(Integer id){
+    @GetMapping("/{id}")
+    public Optional<Cctv> findByID(Integer id){
         return cctvService.findById(id);
     }
 }
