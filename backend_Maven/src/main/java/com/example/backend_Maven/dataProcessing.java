@@ -64,7 +64,7 @@ public class dataProcessing {
                     String currentImageURL = ((JSONObject)((JSONObject) cctv.get("imageData")).get("static")).get("currentImageURL").toString();
 
                     // Insert into MySQL table
-                    String sql = "INSERT INTO cctv (locationName, nearby_place, longitude, latitude, inService, streamingVideoURL, currentImageURL) VALUES (?, ?, ?, ?, ?, ?, ?)";
+                    String sql = "INSERT INTO cctv (location_name, nearby_place, longitude, latitude, in_service, video_url, image_url) VALUES (?, ?, ?, ?, ?, ?, ?)";
                     PreparedStatement pstmt = dbConnection.prepareStatement(sql);
                     pstmt.setString(1, locationName);
                     pstmt.setString(2, nearbyPlace);
@@ -89,11 +89,11 @@ public class dataProcessing {
 
 //CREATE TABLE cctv (
 //id INT AUTO_INCREMENT PRIMARY KEY,
-//locationName VARCHAR(255),
+//location_name VARCHAR(255),
 //nearby_place VARCHAR(255),
 //longitude VARCHAR(100),
 //latitude VARCHAR(100),
-//inService VARCHAR(35),
-//streamingVideoURL VARCHAR(3000),
-//currentImageURL VARCHAR(3000)
+//in_service VARCHAR(35),
+//video_url VARCHAR(3000),
+//image_url VARCHAR(3000)
 //);

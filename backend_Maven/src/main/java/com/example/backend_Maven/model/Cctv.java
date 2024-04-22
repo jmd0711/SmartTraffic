@@ -1,8 +1,9 @@
 package com.example.backend_Maven.model;
 
+import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
-import org.springframework.data.annotation.Id;
+import jakarta.persistence.Id;
 
 
 //CREATE TABLE cctv (
@@ -16,24 +17,21 @@ import org.springframework.data.annotation.Id;
 //currentImageURL VARCHAR(3000)
 //);
 
-public class cctv {
+@Entity
+public class Cctv {
     @Id
-    @GeneratedValue(strategy=GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
-
     private String locationName;
-
     private String nearby_place;
-
     private String longitude;
-
     private String latitude;
-
     private String inService;
-
     private String videoUrl; //camera_link
-
     private String imageUrl;
+
+    public Cctv() {
+    }
 
     public Integer getId() {
         return id;

@@ -1,66 +1,73 @@
-import React, { useState, useEffect } from "react"
-import { Component } from "react"
-import { withRouter } from "../withrouter"
-import { Container, Row, Col, Stack, InputGroup, Form, Button } from "react-bootstrap"
+import 'leaflet/dist/leaflet.css';
+import React, { Component, useEffect, useState } from 'react';
+import { withRouter } from "../withrouter";
+import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet';
+import { Container, Row, Col, Navbar, Nav, NavDropdown, Form, Button } from 'react-bootstrap';
+import L from 'leaflet';
+delete L.Icon.Default.prototype._getIconUrl;
+L.Icon.Default.mergeOptions({
+  iconRetinaUrl: require('leaflet/dist/images/marker-icon-2x.png'),
+  iconUrl: require('leaflet/dist/images/marker-icon.png'),
+  shadowUrl: require('leaflet/dist/images/marker-shadow.png'),
+});
 
 class CCTV extends Component {
-  constructor() {
-    super()
-  }
+
+  handleSearch = (event) => {
+    event.preventDefault();
+    console.log("Search submitted");
+  };
 
   render() {
-    return (
-      <div className="main-page">
-        <Container>
-          {/*<h3 className="page-header"> CCTV PAGE </h3>*/}
-          <Row className="justify-content-center">
+    const position = [37.7749, -122.4194]; // Example position for San Francisco
+    const markerPosition = [37.7749, -122.4194]; // Example marker position
 
-            <Col xs={4} className="section sidebar">
-              <h1>CCTVs</h1>
-              <Form.Control
-                placeholder="Filter"
-                aria-label="Filter"
-                aria-describedby="basic-addon2"
-              />
-              <Stack gap={3}>
-                <div className="p-2">First item</div>
-                <div className="p-2">Second item</div>
-                <div className="p-2">Third item</div>
-              </Stack>
-              <div className="d-flex justify-content-end">
-                <Button variant="primary" type="submit">
-                  Add CCTV
-                </Button>
+    return (
+      <div className="main-page" style={{ height: '100vh', backgroundColor: '#2B3E50' }}>
+        <Container fluid style={{ height: 'calc(100% - 56px)' }}>
+          <Row className="h-100">
+            <Col xs={12} md={3} style={{ backgroundColor: '#354A60' }}>
+              <div className="p-3">
+                <h3 className="text-light mb-3">CCTV</h3>
+                <Form.Control
+                  type="text"
+                  placeholder="Filter"
+                  className="mb-3"
+                />
+                {/* List of CCTV cameras */}
+                <div style={{ backgroundColor: '#ADD8E6', color: '#000000', padding: '8px', marginBottom: '8px' }}>CCTV #1</div>
+                <div style={{ backgroundColor: '#ADD8E6', color: '#000000', padding: '8px', marginBottom: '8px' }}>CCTV #2</div>
+                <div style={{ backgroundColor: '#ADD8E6', color: '#000000', padding: '8px', marginBottom: '8px' }}>CCTV #3</div>
+            
               </div>
             </Col>
-            <Col>
-              <Row className="section map justify-content-center">
-                <InputGroup className="mb-3">
-                  <Form.Control
-                    placeholder="Search"
-                    aria-label="Search"
-                    aria-describedby="basic-addon2"
-                  />
-                  <Button variant="primary" id="button-addon2">
-                    Search
-                  </Button>
-                </InputGroup>
-                Map
-              </Row>
-              <Row className="section">
-                <Stack direction="horizontal" gap={3} className="justify-content-md-center">
-                  <div className="p-2">First item</div>
-                  <div className="p-2">Second item</div>
-                  <div className="p-2">Third item</div>
-                </Stack>
-              </Row>
+            <Col xs={12} md={9} className="p-3" style={{ overflowY: 'auto' }}>
+              <Form className="mb-3 d-flex" onSubmit={this.handleSearch}>
+                <Form.Control
+                  type="text"
+                  placeholder="Search Area or CCTV Number"
+                  className="me-2"
+                  style={{ flexGrow: 1 }}
+                />
+                <Button type="submit" style={{ backgroundColor: '#007bff', borderColor: '#007bff' }}>Search</Button>
+              </Form>
+              <MapContainer center={position} zoom={13} scrollWheelZoom={false} style={{ height: '65%', width: '100%' }}>
+                <TileLayer
+                  url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+                  attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+                />
+                <Marker position={markerPosition}>
+                  <Popup>
+                    A marker!
+                  </Popup>
+                </Marker>
+              </MapContainer>
             </Col>
           </Row>
-
         </Container>
       </div>
     );
   }
 }
 
-export default withRouter(CCTV)
+export default withRouter(CCTV);
