@@ -1,3 +1,5 @@
+package com.example.backend_Maven;
+
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -16,22 +18,29 @@ public class CaltransWebScraper {
             String url = "https://cwwp2.dot.ca.gov/vm/streamlist.htm";
             Document doc = Jsoup.connect(url).get();
 
-            // Extract nearby places
-            Element nearbyPlacesElement = doc.selectFirst("div.nearbyPlaces");
-            String nearbyPlaces = nearbyPlacesElement.text();
-
-            // Extract streaming camera information
-            Element cameraListElement = doc.selectFirst("div.cameraList");
-            Elements cameraElements = cameraListElement.select("div.camera");
+            // Extract data from the table
+            Element table = doc.select("table").get(0); // Assuming the data is in the first table
+            Elements rows = table.select("tr");
 
             // Connect to MySQL database
-            conn = DriverManager.getConnection("jdbc:mysql://localhost:3306/your_database", "username", "password");
+            conn = DriverManager.getConnection("jdbc:mysql://localhost:3306/smart-traffic", "root", "");
 
-            // Insert nearby places into MySQL
-            insertNearbyPlaces(conn, nearbyPlaces);
+            // Process each row of the table (skipping the header row)
+            for (int i = 1; i < rows.size(); i++) {
+                Element row = rows.get(i);
+                Elements cols = row.select("td");
 
-            // Insert streaming camera information into MySQL
-            insertCameraData(conn, cameraElements);
+                // Extract data from columns
+                String route = cols.get(0).text();
+                if (!route.isEmpty()) {
+                    String county = cols.get(1).text();
+                    String nearbyPlace = cols.get(2).text();
+                    String cameraLink = cols.get(3).selectFirst("a").attr("href");
+                    String cameraName = cols.get(3).text();
+                    // Insert data into MySQL
+                    insertData(conn, nearbyPlace, cameraName, cameraLink, route, county);
+                }
+            }
 
             System.out.println("Data inserted successfully.");
 
@@ -48,27 +57,26 @@ public class CaltransWebScraper {
         }
     }
 
-    private static void insertNearbyPlaces(Connection conn, String nearbyPlaces) throws SQLException {
-        String insertNearbyPlacesQuery = "INSERT INTO nearby_places (place_name) VALUES (?)";
-        try (PreparedStatement pstmt = conn.prepareStatement(insertNearbyPlacesQuery)) {
-            pstmt.setString(1, nearbyPlaces);
+    private static void insertData(Connection conn, String nearbyPlace, String cameraName,
+                                   String cameraLink, String route, String county) throws SQLException {
+        String insertDataQuery = "INSERT INTO cctv (nearby_place, camera_name, camera_link, route, county) VALUES (?, ?, ?, ?, ?)";
+        try (PreparedStatement pstmt = conn.prepareStatement(insertDataQuery)) {
+            pstmt.setString(1, nearbyPlace);
+            pstmt.setString(2, cameraName);
+            pstmt.setString(3, cameraLink);
+            pstmt.setString(4, route);
+            pstmt.setString(5, county);
             pstmt.executeUpdate();
         }
     }
-
-    private static void insertCameraData(Connection conn, Elements cameraElements) throws SQLException {
-        String insertCameraQuery = "INSERT INTO streaming_cameras (camera_name, location, camera_link) VALUES (?, ?, ?)";
-        try (PreparedStatement pstmt = conn.prepareStatement(insertCameraQuery)) {
-            for (Element camera : cameraElements) {
-                String cameraName = camera.selectFirst("h3").text();
-                String cameraLocation = camera.selectFirst("p").text();
-                String cameraLink = camera.selectFirst("a").attr("href");
-
-                pstmt.setString(1, cameraName);
-                pstmt.setString(2, cameraLocation);
-                pstmt.setString(3, cameraLink);
-                pstmt.executeUpdate();
-            }
-        }
-    }
 }
+
+
+//CREATE TABLE cctv (
+//id INT AUTO_INCREMENT PRIMARY KEY,
+//nearby_place VARCHAR(255),
+//camera_name VARCHAR(255),
+//camera_link VARCHAR(3000),
+//route VARCHAR(255),
+//county VARCHAR(255)
+//);

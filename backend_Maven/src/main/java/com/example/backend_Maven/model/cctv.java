@@ -1,13 +1,30 @@
+package com.example.backend_Maven.model;
+
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import org.springframework.data.annotation.Id;
+//CREATE TABLE cctv (
+//id INT AUTO_INCREMENT PRIMARY KEY,
+//nearby_place VARCHAR(255),
+//camera_name VARCHAR(255),
+//camera_link VARCHAR(3000),
+//route VARCHAR(255),
+//county VARCHAR(255)
+//);
 public class cctv {
     @Id
-    @GeneratedValue(strategy=GenerationType.AUTO)
+    @GeneratedValue(strategy= GenerationType.AUTO)
     private Integer id;
 
-    private String name;
+    private String route;
 
-    private String location;
+    private String county;
 
-    private String url;
+    private String nearby; //nearby_place
+
+    private String stream; //camera_link
+
+    private String url; //camera_link
 
     public Integer getId() {
         return id;
@@ -17,24 +34,40 @@ public class cctv {
         this.id = id;
     }
 
-    public String getName() {
-        return name;
+    public String getRoute() {
+        return route;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public void setRoute(String name) {
+        this.route = route;
     }
 
-    public String getLocation() {
-        return location;
+    public String getCounty() {
+        return county;
     }
 
-    public void setLocation(String location) {
-        this.location = location;
+    public void setCounty(String county) {
+        this.county = county;
+    }
+
+    public String getNearby() {
+        return nearby;
+    }
+
+    public void setNearby(String nearby) {
+        this.nearby = nearby;
+    }
+
+    public String getStream() {
+        return stream;
+    }
+
+    public void setStream(String stream) {
+        this.stream = stream;
     }
 
     public String getUrl() {
-        return location;
+        return url;
     }
 
     public void setUrl(String url) {
