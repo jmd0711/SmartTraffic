@@ -6,7 +6,7 @@ import { ResponsiveBar } from '@nivo/bar'
 
 class BarChart extends Component {
     render() {
-        const d = require('./sample.json')
+        const d = require('./barsample.json')
         return (
             <ResponsiveBar
                 data={d}

@@ -5,6 +5,9 @@
   "dependencies": {
     "@nivo/bar": "^0.85.1",
     "@nivo/core": "^0.85.1",
+    "@nivo/line": "^0.85.1",
+    "@nivo/radial-bar": "^0.85.1",
+    "@nivo/stream": "^0.85.1",
     "@testing-library/jest-dom": "^5.17.0",
     "@testing-library/react": "^13.4.0",
     "@testing-library/user-event": "^13.5.0",

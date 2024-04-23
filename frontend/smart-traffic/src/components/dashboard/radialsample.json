@@ -1,0 +1,65 @@
+[
+    {
+      "id": "Supermarket",
+      "data": [
+        {
+          "x": "Vegetables",
+          "y": 121
+        },
+        {
+          "x": "Fruits",
+          "y": 69
+        },
+        {
+          "x": "Meat",
+          "y": 83
+        },
+        {
+          "x": "Fish",
+          "y": 293
+        }
+      ]
+    },
+    {
+      "id": "Combini",
+      "data": [
+        {
+          "x": "Vegetables",
+          "y": 127
+        },
+        {
+          "x": "Fruits",
+          "y": 259
+        },
+        {
+          "x": "Meat",
+          "y": 148
+        },
+        {
+          "x": "Fish",
+          "y": 41
+        }
+      ]
+    },
+    {
+      "id": "Online",
+      "data": [
+        {
+          "x": "Vegetables",
+          "y": 158
+        },
+        {
+          "x": "Fruits",
+          "y": 49
+        },
+        {
+          "x": "Meat",
+          "y": 252
+        },
+        {
+          "x": "Fish",
+          "y": 182
+        }
+      ]
+    }
+  ]

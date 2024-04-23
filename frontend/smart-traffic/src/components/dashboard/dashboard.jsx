@@ -6,6 +6,9 @@ import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet';
 import { Container, Row, Col, Form, Button } from 'react-bootstrap';
 import L from 'leaflet';
 import BarChart from './barchart'
+import LineChart from './linechart';
+import RadialBarChart from './radialbar'
+import StreamChart from './streamchart'
 delete L.Icon.Default.prototype._getIconUrl;
 L.Icon.Default.mergeOptions({
   iconRetinaUrl: require('leaflet/dist/images/marker-icon-2x.png'),
@@ -21,8 +24,8 @@ class Dashboard extends Component {
   };
 
   render() {
-    const position = [37.7749, -122.4194]; // Example position for San Francisco
-    const markerPosition = [37.7749, -122.4194]; // Example marker position
+    const position = [37.3346, -121.8753]; // Example position for San Jose
+    const markerPosition = [37.3346, -121.8753]; // Example marker position
 
     return (
       <Container fluid className='main-page'>
@@ -62,15 +65,15 @@ class Dashboard extends Component {
               </Marker>
             </MapContainer>
             <div className='device-details mt-3'>
-              <BarChart />
+              <LineChart />
             </div>
           </Col>
           <Col md={3} className='side-bar d-flex flex-column p-3 ms-3 me-3'>
             <div className='device-details mt-3'>
-              <BarChart />
+              <RadialBarChart />
             </div>
             <div className='device-details mt-3'>
-              <BarChart />
+              <StreamChart />
             </div>
             <div className='device-details mt-3'>
               <BarChart />
