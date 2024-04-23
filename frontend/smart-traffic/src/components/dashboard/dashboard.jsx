@@ -5,6 +5,7 @@ import { withRouter } from "../withrouter";
 import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet';
 import { Container, Row, Col, Form, Button } from 'react-bootstrap';
 import L from 'leaflet';
+import BarChart from './barchart'
 delete L.Icon.Default.prototype._getIconUrl;
 L.Icon.Default.mergeOptions({
   iconRetinaUrl: require('leaflet/dist/images/marker-icon-2x.png'),
@@ -26,7 +27,7 @@ class Dashboard extends Component {
     return (
       <Container fluid className='main-page'>
         <Row className='h-100'>
-          <Col md={3} className='side-bar p-3'>
+          <Col md={3} className='side-bar p-3 ms-3 me-0'>
             <h3 className="text-light mb-3">Incidents</h3>
             <Form.Control
               type="text"
@@ -38,7 +39,7 @@ class Dashboard extends Component {
             <div className='side-bar-content mb-2 p-2'>Road Work #1</div>
             <div className='side-bar-content mb-2 p-2'>Car Crash #2</div>
           </Col>
-          <Col className='main-body p-3'>
+          <Col className='main-body d-flex flex-column p-3 ms-3 me-0'>
             <Form className="d-flex mb-3" onSubmit={this.handleSearch}>
               <Form.Control
                 type="text"
@@ -49,18 +50,34 @@ class Dashboard extends Component {
               <Button variant="primary" type="submit">Search</Button>
             </Form>
             <MapContainer center={position} zoom={13} scrollWheelZoom={false}>
-                <TileLayer
-                  url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-                  attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-                />
-                <Marker position={markerPosition}>
-                  <Popup>
-                    A marker!
-                  </Popup>
-                </Marker>
-              </MapContainer>
+              <TileLayer
+                url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+                attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+              />
+              <Marker position={markerPosition}>
+                <Popup>
+                  <div>A marker!</div>
+                  <Button variant="primary" type="submit">View</Button>
+                </Popup>
+              </Marker>
+            </MapContainer>
+            <div className='device-details mt-3'>
+              <BarChart />
+            </div>
+          </Col>
+          <Col md={3} className='side-bar d-flex flex-column p-3 ms-3 me-3'>
+            <div className='device-details mt-3'>
+              <BarChart />
+            </div>
+            <div className='device-details mt-3'>
+              <BarChart />
+            </div>
+            <div className='device-details mt-3'>
+              <BarChart />
+            </div>
           </Col>
         </Row>
+
       </Container>
     );
   }
