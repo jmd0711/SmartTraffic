@@ -2,6 +2,7 @@ import '../components.css'
 import React, { Component } from 'react'
 import { withRouter } from '../withrouter'
 import { Button, Container, Form, FloatingLabel } from "react-bootstrap"
+import { login } from './userapi'
 
 class Login extends Component {
   constructor() {
@@ -21,10 +22,28 @@ class Login extends Component {
   }
 
   onSubmit(e) {
-    //Temporary login
-    console.log(this.state.username)
-    localStorage.setItem("userToken", this.state.username)
-    this.props.navigate('/')
+    // Temporary login
+    // console.log(this.state.username)
+    // localStorage.setItem("userToken", this.state.username)
+    // this.props.navigate('/')
+
+    // Real Login
+    e.preventDefault()
+    const user = {
+      username: this.state.username,
+      password: this.state.password
+    }
+    login(user).then(res => {
+      if (this.state.username === '' || this.state.password === '') {
+        window.alert("Please fill all the fields!")
+      } else if (!res) {
+        window.alert("Account not found! Please try again.")
+        localStorage.clear()
+        window.location.reload()
+      } else {
+        this.props.navigate(`/`)
+      }
+    })
   }
 
   render() {
