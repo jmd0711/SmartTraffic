@@ -12,7 +12,15 @@ public class UserServiceImpl implements UserService {
     private UserRepository userRepository;
 
     @Override
-    public User saveUser(User user) {
-        return userRepository.save(user);
+    public User registerUser(User user) {
+        if (userRepository.findByUsernameOrEmail(user.getUsername(), user.getEmail()) != null) {
+            return null;
+        } else {
+            User newUser = userRepository.save(user);
+            if (newUser != null) {
+                newUser.setPassword("");
+            }
+            return newUser;
+        }
     }
 }
