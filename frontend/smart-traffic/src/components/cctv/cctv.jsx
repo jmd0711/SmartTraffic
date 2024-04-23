@@ -18,9 +18,35 @@ class CCTV extends Component {
     console.log("Search submitted");
   };
 
+  constructor(props) {
+    super(props);
+    this.mapRef = React.createRef();
+    this.state = {
+      selectedItem: null,
+      markerPosition: null,
+      items: [],
+    };
+  }
+
+  componentDidMount() {
+    fetch('http://localhost:8080/cctv/getAll')
+      .then(response => response.json())
+      .then(data => this.setState({ items: data }))
+      .catch(error => console.log('Error fetching data:', error));
+  }
+
+  handleItemClick = (item) => {
+    const map = this.mapRef.current;
+    this.setState({selectedItem: item});
+    this.setState({ markerPosition: [item.latitude, item.longitude] });
+    const bounds = map.getBounds().extend([item.latitude, item.longitude]);
+    map.fitBounds(bounds);
+  }
+
   render() {
-    const position = [37.7749, -122.4194]; // Example position for San Francisco
-    const markerPosition = [37.7749, -122.4194]; // Example marker position
+    // const position = [37.7749, -122.4194]; // Example position for San Francisco
+    // const markerPosition = [37.7749, -122.4194]; // Example marker position
+    const {items, selectedItem, markerPosition} = this.state;
 
     return (
       <Container fluid className='main-page'>
@@ -33,12 +59,14 @@ class CCTV extends Component {
               className="mb-3"
             />
             {/* List of CCTV cameras */}
-            <div className='side-bar-content mb-2 p-2'>CCTV #1</div>
-            <div className='side-bar-content mb-2 p-2'>CCTV #2</div>
-            <div className='side-bar-content mb-2 p-2'>CCTV #3</div>
+            {items.slice(0, 8).map(item => (
+              <div className='side-bar-content mb-2 p-2' key={item.id} onClick={() => this.handleItemClick(item)}>
+                CCTV{item.id}
+              </div>
+            ))}
             <div className="d-flex justify-content-end">
               <Button variant="primary" type="submit">
-                Add Drone
+                Add CCTV
               </Button>
             </div>
           </Col>
@@ -52,18 +80,33 @@ class CCTV extends Component {
               />
               <Button variant="primary" type="submit">Search</Button>
             </Form>
-            <MapContainer center={position} zoom={13} scrollWheelZoom={false}>
+            <MapContainer center={[37.7749, -122.4194]} zoom={13} onClick={this.handleClick} ref={this.mapRef}>
               <TileLayer
                 url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
                 attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
               />
-              <Marker position={markerPosition}>
-                <Popup>
-                  A marker!
-                </Popup>
-              </Marker>
+              {markerPosition && ( // Render Marker only if position is defined
+                <Marker position={markerPosition}>
+                  <Popup>
+                    CCTV <br />
+                  </Popup>
+                </Marker>
+              )}
             </MapContainer>
-            <div className='device-details p-3 mt-3'>CCTV #1
+            <div className='device-details p-3 mt-3'>
+              {selectedItem ? (
+                <div> 
+                  <h5>CCTV#{selectedItem.id} Details</h5>
+                  <p>Address:{selectedItem.locationName}</p>
+                  <p>Latitude, Longitude: {selectedItem.latitude}, {selectedItem.longitude}</p>
+                  <p>In Service: {selectedItem.inService}</p>
+                  <p>Video URL: <a href={selectedItem.videoUrl} target="_blank" rel="noopener noreferrer">{selectedItem.videoUrl}</a></p>
+                  <img src={selectedItem.imageUrl} alt="Item" height="150"/>
+                </div>
+              ) : (
+                <p>Please select a CCTV to view information</p>
+              )}
+
               <div className="d-flex align-items-end flex-column" style={{ height: '90%' }}>
                 <div className='mt-auto'>
                   <Button variant="primary" type="submit">
