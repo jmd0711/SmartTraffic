@@ -14,7 +14,7 @@ import MarkerClusterGroup from "react-leaflet-cluster";
 let allmarkers = [
   {
     geocode: [37.3, -121.9],
-    popUp:  "Drone 1" //'https://www.youtube.com/embed/LE3kyE_pMGE?si=bh2LIRTwotaa5tqP'
+    popUp: "Drone 1" //'https://www.youtube.com/embed/LE3kyE_pMGE?si=bh2LIRTwotaa5tqP'
   },
   {
     geocode: [37.4, -121.8],
@@ -47,46 +47,42 @@ class Drone extends Component {
 
   render() {
     return (
-      <div className="main-page">
-        <Container>
-          {/*<h3 className="page-header"> DRONE PAGE </h3>*/}
-          <Row className="justify-content-center">
+      <Container fluid className='main-page'>
+        <Row className='h-100'>
 
-            <Col xs={4} className="section sidebar">
-              <h1>Drones</h1>
-              <Form.Control
-                placeholder="Filter"
-                aria-label="Filter"
-                aria-describedby="basic-addon2"
-              />
-              <Stack gap={3}>
-                <div className="p-2">First item</div>
-                <div className="p-2">Second item</div>
-                <div className="p-2">Third item</div>
-              </Stack>
-              <div className="d-flex justify-content-end">
-                <Button variant="primary" type="submit">
-                  Add Drone
-                </Button>
-              </div>
-            </Col>
-            <Col>
-              <Row className="section map justify-content-center">
-              <InputGroup className="mb-3">
-              <Form.Control
-                placeholder="Search"
-                aria-label="Search"
-                aria-describedby="basic-addon2"
-              />
-              <Button variant="primary" id="button-addon2">
-                Search
+          <Col md={3} className="side-bar p-3">
+            <h3 className="text-light mb-3">Drones</h3>
+            <Form.Control
+              type="text"
+              placeholder="Filter"
+              className="mb-3"
+            />
+            {/* List of Drone cameras */}
+            <div className='side-bar-content mb-2 p-2'>Drone #1</div>
+            <div className='side-bar-content mb-2 p-2'>Drone #2</div>
+            <div className='side-bar-content mb-2 p-2'>Drone #3</div>
+            <div className="d-flex justify-content-end">
+              <Button variant="primary" type="submit">
+                Add Drone
               </Button>
-              <MapContainer center={[37.334665328, -121.875329832]} zoom={12} scrollWheelZoom={true}>
-                <TileLayer
-                  url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-                  attribution='&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
-                />
-                <MarkerClusterGroup
+            </div>
+          </Col>
+          <Col className="main-body d-flex flex-column p-3">
+            <Form className="d-flex mb-3" onSubmit={this.handleSearch}>
+              <Form.Control
+                type="text"
+                placeholder="Search Area or Drone id"
+                className="me-3"
+                style={{ flexGrow: 1 }}
+              />
+              <Button variant="primary" type="submit">Search</Button>
+            </Form>
+            <MapContainer center={[37.334665328, -121.875329832]} zoom={12} scrollWheelZoom={true}>
+              <TileLayer
+                url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+                attribution='&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
+              />
+              <MarkerClusterGroup
                 chunkedLoading
                 iconCreateFunction={createClusterCustomIcon}
               >
@@ -95,21 +91,23 @@ class Drone extends Component {
                     <Popup>{marker.popUp} </Popup>
                   </Marker>
                 ))}
-                </MarkerClusterGroup>
-              </MapContainer>
-            </InputGroup>
-              </Row>
-              <Row className="section">
-                <Stack direction="horizontal" gap={3} className="justify-content-md-center">
-                  <div className="p-2">First item</div>
-                  <div className="p-2">Second item</div>
-                  <div className="p-2">Third item</div>
-                </Stack>
-              </Row>
-            </Col>
-          </Row>
-        </Container>
-      </div>
+              </MarkerClusterGroup>
+            </MapContainer>
+            <div className='device-details p-3 mt-3'>Drone #1
+              <div className="d-flex align-items-end flex-column" style={{ height: '90%' }}>
+                <div className='mt-auto'>
+                  <Button variant="primary" type="submit">
+                    Update
+                  </Button>
+                  <Button className="ms-2" variant="danger" type="submit">
+                    Delete
+                  </Button>
+                </div>
+              </div>
+            </div>
+          </Col>
+        </Row>
+      </Container>
     )
   }
 }

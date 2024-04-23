@@ -2,6 +2,7 @@ import React, { Component } from 'react'
 import { Link } from 'react-router-dom'
 import { withRouter } from './withrouter'
 import { Container, Nav, Navbar } from "react-bootstrap"
+import './components.css'
 
 class NavBar extends Component {
   logOut(e) {
@@ -30,14 +31,12 @@ class NavBar extends Component {
     )
 
     return (
-      <Navbar bg="navbar-color" data-bs-theme="dark">
-        <Container>
+      <Navbar bg="navbar-color" data-bs-theme="dark" className="px-3">
           <Navbar.Brand href="/">Smart Traffic</Navbar.Brand>
           <Navbar.Toggle aria-controls="basic-navbar-nav" />
           <Navbar.Collapse className="justify-content-end">
             {typeof localStorage.userToken === "string" ? userLink : loginRegisterLink}
           </Navbar.Collapse>
-        </Container>
       </Navbar>
     )
   }

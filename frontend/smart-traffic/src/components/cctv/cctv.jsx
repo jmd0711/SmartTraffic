@@ -2,7 +2,7 @@ import 'leaflet/dist/leaflet.css';
 import React, { Component, useEffect, useState } from 'react';
 import { withRouter } from "../withrouter";
 import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet';
-import { Container, Row, Col, Navbar, Nav, NavDropdown, Form, Button } from 'react-bootstrap';
+import { Container, Row, Col, Form, Button } from 'react-bootstrap';
 import L from 'leaflet';
 delete L.Icon.Default.prototype._getIconUrl;
 L.Icon.Default.mergeOptions({
@@ -23,49 +23,61 @@ class CCTV extends Component {
     const markerPosition = [37.7749, -122.4194]; // Example marker position
 
     return (
-      <div className="main-page" style={{ height: '100vh', backgroundColor: '#2B3E50' }}>
-        <Container fluid style={{ height: 'calc(100% - 56px)' }}>
-          <Row className="h-100">
-            <Col xs={12} md={3} style={{ backgroundColor: '#354A60' }}>
-              <div className="p-3">
-                <h3 className="text-light mb-3">CCTV</h3>
-                <Form.Control
-                  type="text"
-                  placeholder="Filter"
-                  className="mb-3"
-                />
-                {/* List of CCTV cameras */}
-                <div style={{ backgroundColor: '#ADD8E6', color: '#000000', padding: '8px', marginBottom: '8px' }}>CCTV #1</div>
-                <div style={{ backgroundColor: '#ADD8E6', color: '#000000', padding: '8px', marginBottom: '8px' }}>CCTV #2</div>
-                <div style={{ backgroundColor: '#ADD8E6', color: '#000000', padding: '8px', marginBottom: '8px' }}>CCTV #3</div>
-            
+      <Container fluid className='main-page'>
+        <Row className="h-100">
+          <Col md={3} className='side-bar p-3'>
+            <h3 className="text-light mb-3">CCTVs</h3>
+            <Form.Control
+              type="text"
+              placeholder="Filter"
+              className="mb-3"
+            />
+            {/* List of CCTV cameras */}
+            <div className='side-bar-content mb-2 p-2'>CCTV #1</div>
+            <div className='side-bar-content mb-2 p-2'>CCTV #2</div>
+            <div className='side-bar-content mb-2 p-2'>CCTV #3</div>
+            <div className="d-flex justify-content-end">
+              <Button variant="primary" type="submit">
+                Add Drone
+              </Button>
+            </div>
+          </Col>
+          <Col className="main-body d-flex flex-column p-3">
+            <Form className="d-flex mb-3" onSubmit={this.handleSearch}>
+              <Form.Control
+                type="text"
+                placeholder="Search Area or CCTV Number"
+                className="me-3"
+                style={{ flexGrow: 1 }}
+              />
+              <Button variant="primary" type="submit">Search</Button>
+            </Form>
+            <MapContainer center={position} zoom={13} scrollWheelZoom={false}>
+              <TileLayer
+                url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+                attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+              />
+              <Marker position={markerPosition}>
+                <Popup>
+                  A marker!
+                </Popup>
+              </Marker>
+            </MapContainer>
+            <div className='device-details p-3 mt-3'>CCTV #1
+              <div className="d-flex align-items-end flex-column" style={{ height: '90%' }}>
+                <div className='mt-auto'>
+                  <Button variant="primary" type="submit">
+                    Update
+                  </Button>
+                  <Button className="ms-2" variant="danger" type="submit">
+                    Delete
+                  </Button>
+                </div>
               </div>
-            </Col>
-            <Col xs={12} md={9} className="p-3" style={{ overflowY: 'auto' }}>
-              <Form className="mb-3 d-flex" onSubmit={this.handleSearch}>
-                <Form.Control
-                  type="text"
-                  placeholder="Search Area or CCTV Number"
-                  className="me-2"
-                  style={{ flexGrow: 1 }}
-                />
-                <Button type="submit" style={{ backgroundColor: '#007bff', borderColor: '#007bff' }}>Search</Button>
-              </Form>
-              <MapContainer center={position} zoom={13} scrollWheelZoom={false} style={{ height: '65%', width: '100%' }}>
-                <TileLayer
-                  url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-                  attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-                />
-                <Marker position={markerPosition}>
-                  <Popup>
-                    A marker!
-                  </Popup>
-                </Marker>
-              </MapContainer>
-            </Col>
-          </Row>
-        </Container>
-      </div>
+            </div>
+          </Col>
+        </Row>
+      </Container>
     );
   }
 }

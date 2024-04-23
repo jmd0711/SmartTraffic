@@ -1,69 +1,68 @@
-import React, { useState, useEffect } from "react"
-import { Container, Row, Col, Stack, InputGroup, Form, Button } from "react-bootstrap"
-import { Component } from "react"
-import { withRouter } from "../withrouter"
-import { MapContainer, TileLayer, useMap, Popup, Marker } from 'react-leaflet'
-import "./dashboard.css"
-import * as L from "leaflet";
+import 'leaflet/dist/leaflet.css';
+import '../components.css';
+import React, { Component, useEffect, useState } from 'react';
+import { withRouter } from "../withrouter";
+import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet';
+import { Container, Row, Col, Form, Button } from 'react-bootstrap';
+import L from 'leaflet';
+delete L.Icon.Default.prototype._getIconUrl;
+L.Icon.Default.mergeOptions({
+  iconRetinaUrl: require('leaflet/dist/images/marker-icon-2x.png'),
+  iconUrl: require('leaflet/dist/images/marker-icon.png'),
+  shadowUrl: require('leaflet/dist/images/marker-shadow.png'),
+});
 
 class Dashboard extends Component {
-  constructor() {
-    super()
-  }
+
+  handleSearch = (event) => {
+    event.preventDefault();
+    console.log("Search submitted");
+  };
 
   render() {
+    const position = [37.7749, -122.4194]; // Example position for San Francisco
+    const markerPosition = [37.7749, -122.4194]; // Example marker position
+
     return (
-      <div className="main-page">
-        <Container>
-          {/*<h3 className="page-header"> DASHBOARD PAGE </h3>*/}
-          <Row className="justify-content-center page-container">
-
-            <Col xs={4} className="section sidebar">
-              <h1>Incidents</h1>
+      <Container fluid className='main-page'>
+        <Row className='h-100'>
+          <Col md={3} className='side-bar p-3'>
+            <h3 className="text-light mb-3">Incidents</h3>
+            <Form.Control
+              type="text"
+              placeholder="Filter"
+              className="mb-3"
+            />
+            {/* List of road incidents */}
+            <div className='side-bar-content mb-2 p-2'>Car Crash #1</div>
+            <div className='side-bar-content mb-2 p-2'>Road Work #1</div>
+            <div className='side-bar-content mb-2 p-2'>Car Crash #2</div>
+          </Col>
+          <Col className='main-body p-3'>
+            <Form className="d-flex mb-3" onSubmit={this.handleSearch}>
               <Form.Control
-                placeholder="Filter"
-                aria-label="Filter"
-                aria-describedby="basic-addon2"
+                type="text"
+                placeholder="Search Area"
+                className="me-3"
+                style={{ flexGrow: 1 }}
               />
-              <Stack gap={3}>
-                <div className="p-2">First item</div>
-                <div className="p-2">Second item</div>
-                <div className="p-2">Third item</div>
-              </Stack>
-            </Col>
-            <Col className="d-flex flex-column">
-              <Row className="section map justify-content-center p-2">
-                <InputGroup className="mb-3">
-                  <Form.Control
-                    placeholder="Search"
-                    aria-label="Search"
-                    aria-describedby="basic-addon2"
-                  />
-                  <Button variant="primary" id="button-addon2">
-                    Search
-                  </Button>
-                  <MapContainer center={[37.7749, -122.4194]} zoom={12} scrollWheelZoom={false}>
-                    <TileLayer
-                      url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-                      attribution='&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
-                    />
-                  </MapContainer>
-                </InputGroup>
-              </Row>
-              <Row className="section p-2">
-                <Stack direction="horizontal" gap={3} className="justify-content-md-center">
-                  <div className="p-2">First item</div>
-                  <div className="p-2">Second item</div>
-                  <div className="p-2">Third item</div>
-                </Stack>
-              </Row>
-            </Col>
-          </Row>
-
-        </Container>
-
-      </div>
-    )
+              <Button variant="primary" type="submit">Search</Button>
+            </Form>
+            <MapContainer center={position} zoom={13} scrollWheelZoom={false}>
+                <TileLayer
+                  url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+                  attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+                />
+                <Marker position={markerPosition}>
+                  <Popup>
+                    A marker!
+                  </Popup>
+                </Marker>
+              </MapContainer>
+          </Col>
+        </Row>
+      </Container>
+    );
   }
 }
 

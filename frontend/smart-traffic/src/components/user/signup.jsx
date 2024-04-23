@@ -25,9 +25,9 @@ class Register extends Component {
 
   render() {
     return (
-      <div className="main-page">
-        <Container className="section user-container w-50">
-          <h1>Sign Up</h1>
+        <Container fluid className='main-page'>
+          <div className='auth-body h-100 py-3 px-5'>
+          <h3 className="text-light mb-3">Sign Up</h3>
           <Form onSubmit={this.onSubmit}>
             <FloatingLabel
               controlId="floatingInput"
@@ -71,8 +71,8 @@ class Register extends Component {
               </Button>
             </div>
           </Form>
+          </div>
         </Container>
-      </div>
     )
   }
 }

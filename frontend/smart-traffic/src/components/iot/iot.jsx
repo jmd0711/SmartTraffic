@@ -23,71 +23,61 @@ class Drone extends Component {
     const markerPosition = [37.7749, -122.4194]; // Example marker position
 
     return (
-      <div className="main-page" style={{ height: '100vh', backgroundColor: '#2B3E50' }}>
-        <Navbar style={{ backgroundColor: '#2B3E50' }} variant="dark" expand="lg">
-          <Container fluid>
-            <Navbar.Brand href="#home" style={{ color: '#FFFFFF' }}>Traffic AI</Navbar.Brand>
-            <Navbar.Toggle aria-controls="basic-navbar-nav" />
-            <Navbar.Collapse id="basic-navbar-nav">
-              <Nav className="me-auto">
-                {/* Left aligned items (optional) */}
-              </Nav>
-              <Nav>
-                
-                <NavDropdown title="Management" id="basic-nav-dropdown" style={{ color: '#FFFFFF' }}>
-                  <NavDropdown.Item href="#add">ADD</NavDropdown.Item>
-                  <NavDropdown.Item href="#update">UPDATE</NavDropdown.Item>
-                  <NavDropdown.Item href="#delete">DELETE</NavDropdown.Item>
-                  <NavDropdown.Item href="#retrieve">RETRIEVE</NavDropdown.Item>
-                </NavDropdown>
-                <Nav.Link href="#prediction" style={{ color: '#FFFFFF' }}>Predictions</Nav.Link>
-              </Nav>
-            </Navbar.Collapse>
-          </Container>
-        </Navbar>
-
-        <Container fluid style={{ height: 'calc(100% - 56px)' }}>
-          <Row className="h-100">
-            <Col xs={12} md={3} style={{ backgroundColor: '#354A60' }}>
-              <div className="p-3">
-                <h3 className="text-light mb-3">Iot Stations</h3>
-                <Form.Control
-                  type="text"
-                  placeholder="Filter"
-                  className="mb-3"
-                />
-                {/* List of drone cameras */}
-                <div style={{ backgroundColor: '#ADD8E6', color: '#000000', padding: '8px', marginBottom: '8px' }}>Station #1</div>
-                <div style={{ backgroundColor: '#ADD8E6', color: '#000000', padding: '8px', marginBottom: '8px' }}>Station #2</div>
-                <div style={{ backgroundColor: '#ADD8E6', color: '#000000', padding: '8px', marginBottom: '8px' }}>Station #3</div>
-            
+      <Container fluid className='main-page'>
+        <Row className="h-100">
+          <Col md={3} className='side-bar p-3'>
+            <h3 className="text-light mb-3">Iot Stations</h3>
+            <Form.Control
+              type="text"
+              placeholder="Filter"
+              className="mb-3"
+            />
+            {/* List of IoT Stations */}
+            <div className='side-bar-content mb-2 p-2'>Station #1</div>
+            <div className='side-bar-content mb-2 p-2'>Station #2</div>
+            <div className='side-bar-content mb-2 p-2'>Station #3</div>
+            <div className="d-flex justify-content-end">
+              <Button variant="primary" type="submit">
+                Add Drone
+              </Button>
+            </div>
+          </Col>
+          <Col className="main-body d-flex flex-column p-3">
+            <Form className="d-flex mb-3" onSubmit={this.handleSearch}>
+              <Form.Control
+                type="text"
+                placeholder="Search Area or Station id"
+                className="me-3"
+                style={{ flexGrow: 1 }}
+              />
+              <Button variant="primary" type="submit">Search</Button>
+            </Form>
+            <MapContainer center={position} zoom={13} scrollWheelZoom={false} style={{ height: '65%', width: '100%' }}>
+              <TileLayer
+                url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+                attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+              />
+              <Marker position={markerPosition}>
+                <Popup>
+                  A marker!
+                </Popup>
+              </Marker>
+            </MapContainer>
+            <div className='device-details p-3 mt-3'>Station #1
+              <div className="d-flex align-items-end flex-column" style={{ height: '90%' }}>
+                <div className='mt-auto'>
+                  <Button variant="primary" type="submit">
+                    Update
+                  </Button>
+                  <Button className="ms-2" variant="danger" type="submit">
+                    Delete
+                  </Button>
+                </div>
               </div>
-            </Col>
-            <Col xs={12} md={9} className="p-3" style={{ overflowY: 'auto' }}>
-              <Form className="mb-3 d-flex" onSubmit={this.handleSearch}>
-                <Form.Control
-                  type="text"
-                  placeholder="Search Area or CCTV Number"
-                  className="me-2"
-                  style={{ flexGrow: 1 }}
-                />
-                <Button type="submit" style={{ backgroundColor: '#007bff', borderColor: '#007bff' }}>Search</Button>
-              </Form>
-              <MapContainer center={position} zoom={13} scrollWheelZoom={false} style={{ height: '65%', width: '100%' }}>
-                <TileLayer
-                  url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-                  attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-                />
-                <Marker position={markerPosition}>
-                  <Popup>
-                    A marker!
-                  </Popup>
-                </Marker>
-              </MapContainer>
-            </Col>
-          </Row>
-        </Container>
-      </div>
+            </div>
+          </Col>
+        </Row>
+      </Container>
     );
   }
 }
