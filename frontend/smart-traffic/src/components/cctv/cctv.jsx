@@ -1,6 +1,7 @@
 import 'leaflet/dist/leaflet.css';
 import React, { Component, useEffect, useState } from 'react';
 import { withRouter } from "../withrouter";
+import axios from 'axios';
 import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet';
 import { Container, Row, Col, Form, Button } from 'react-bootstrap';
 import L from 'leaflet';
@@ -13,18 +14,14 @@ L.Icon.Default.mergeOptions({
 
 class CCTV extends Component {
 
-  handleSearch = (event) => {
-    event.preventDefault();
-    console.log("Search submitted");
-  };
-
   constructor(props) {
     super(props);
     this.mapRef = React.createRef();
     this.state = {
       selectedItem: null,
       markerPosition: null,
-      items: [],
+      query: '',
+      items: []
     };
   }
 
@@ -34,6 +31,25 @@ class CCTV extends Component {
       .then(data => this.setState({ items: data }))
       .catch(error => console.log('Error fetching data:', error));
   }
+
+
+  handleSearchInputChange = (event) => {
+    this.setState({ query: event.target.value });
+  };
+
+  handleSearch = (event) => {
+    event.preventDefault();
+    const { query } = this.state;
+
+    axios.get(`http://localhost:8080/cctv/search?locationName=${query}&id=${parseInt(query.replace( /[^\d.]/g, '' ))}`)
+      .then(response => {
+        this.setState({ items: response.data });
+      })
+      .catch(error => {
+        console.error('Error fetching search results:', error);
+      });
+  };
+
 
   handleItemClick = (item) => {
     const map = this.mapRef.current;
@@ -46,7 +62,8 @@ class CCTV extends Component {
   render() {
     // const position = [37.7749, -122.4194]; // Example position for San Francisco
     // const markerPosition = [37.7749, -122.4194]; // Example marker position
-    const {items, selectedItem, markerPosition} = this.state;
+    const {items, selectedItem, markerPosition, query} = this.state;
+    
 
     return (
       <Container fluid className='main-page'>
@@ -75,6 +92,8 @@ class CCTV extends Component {
               <Form.Control
                 type="text"
                 placeholder="Search Area or CCTV Number"
+                value={this.state.query}
+                onChange={this.handleSearchInputChange}
                 className="me-3"
                 style={{ flexGrow: 1 }}
               />
@@ -97,10 +116,12 @@ class CCTV extends Component {
               {selectedItem ? (
                 <div> 
                   <h5>CCTV#{selectedItem.id} Details</h5>
-                  <p>Address:{selectedItem.locationName}</p>
+                  <p>Address: {selectedItem.locationName}</p>
                   <p>Latitude, Longitude: {selectedItem.latitude}, {selectedItem.longitude}</p>
                   <p>In Service: {selectedItem.inService}</p>
-                  <p>Video URL: <a href={selectedItem.videoUrl} target="_blank" rel="noopener noreferrer">{selectedItem.videoUrl}</a></p>
+                  {selectedItem.videoUrl ? 
+                  (<p>Video URL: <a href={selectedItem.videoUrl} target="_blank" rel="noopener noreferrer">{selectedItem.videoUrl}</a></p>
+                  ) : (<p>Video URL: Not Provided </p>)}
                   <img src={selectedItem.imageUrl} alt="Item" height="150"/>
                 </div>
               ) : (

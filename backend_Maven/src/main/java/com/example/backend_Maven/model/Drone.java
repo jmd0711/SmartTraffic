@@ -1,9 +1,12 @@
 package com.example.backend_Maven.model;
 
-import jakarta.persistence.*;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
 
 
-//CREATE TABLE cctv (
+//CREATE TABLE drone (
 //id INT AUTO_INCREMENT PRIMARY KEY,
 //locationName VARCHAR(255),
 //nearby_place VARCHAR(255),
@@ -15,11 +18,10 @@ import jakarta.persistence.*;
 //);
 
 @Entity
-public class Cctv {
+public class Drone {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
-    @Column(name = "location_name")
     private String locationName;
     private String nearby_place;
     private String longitude;
@@ -28,7 +30,7 @@ public class Cctv {
     private String videoUrl; //camera_link
     private String imageUrl;
 
-    public Cctv() {
+    public Drone() {
     }
 
     public Integer getId() {

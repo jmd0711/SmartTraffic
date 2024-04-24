@@ -3,6 +3,8 @@ package com.example.backend_Maven.controller;
 import com.example.backend_Maven.model.Cctv;
 import com.example.backend_Maven.service.CctvService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -30,4 +32,14 @@ public class CctvController {
     public Optional<Cctv> findByID(Integer id){
         return cctvService.findById(id);
     }
+
+    @GetMapping("/search")
+    public ResponseEntity<List<Cctv>> findByLocationNameOrId(@RequestParam(required = false) String locationName, @RequestParam(required = false) Integer id) {
+        List<Cctv> cctvs = cctvService.findByLocationNameOrId(locationName, id);
+        if (cctvs.isEmpty()) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+        return new ResponseEntity<>(cctvs, HttpStatus.OK);
+    }
+
 }
