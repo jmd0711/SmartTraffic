@@ -3,6 +3,7 @@ import NavBar from './components/navbar'
 import RoutePages from './components/routes/routepages'
 
 function App() {
+  
   return (
     <BrowserRouter>
         <NavBar />

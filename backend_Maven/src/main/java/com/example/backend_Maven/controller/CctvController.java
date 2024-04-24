@@ -34,12 +34,22 @@ public class CctvController {
     }
 
     @GetMapping("/search")
-    public ResponseEntity<List<Cctv>> findByLocationNameOrId(@RequestParam(required = false) String locationName, @RequestParam(required = false) Integer id) {
-        List<Cctv> cctvs = cctvService.findByLocationNameOrId(locationName, id);
+    public ResponseEntity<List<Cctv>> findByLocationNameContainingOrId(@RequestParam(required = false) String locationName, @RequestParam(required = false) Integer id) {
+        List<Cctv> cctvs = cctvService.findByLocationNameContainingOrId(locationName, id);
         if (cctvs.isEmpty()) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
         return new ResponseEntity<>(cctvs, HttpStatus.OK);
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<?> deleteCCTVEntry(@PathVariable Integer id) {
+        try {
+            cctvService.deleteCCTVEntry(id);
+            return ResponseEntity.ok().build();
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
     }
 
 }

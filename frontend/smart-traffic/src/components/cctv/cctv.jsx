@@ -1,6 +1,7 @@
 import 'leaflet/dist/leaflet.css';
 import React, { Component, useEffect, useState } from 'react';
 import { withRouter } from "../withrouter";
+import PopupForm from './popupForm';
 import axios from 'axios';
 import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet';
 import { Container, Row, Col, Form, Button } from 'react-bootstrap';
@@ -24,17 +25,29 @@ class CCTV extends Component {
       showMessage1: false,
       showMessage2: false,
       mapCenter: [37.7749, -122.4194],
+      showForm: false,
       items: []
     };
     this.handleAddButtonClick = this.handleAddButtonClick.bind(this);
   }
 
+  toggleForm = () => {
+    this.setState(prevState => ({
+      showForm: !prevState.showForm
+    }));
+  };
+
   componentDidMount() {
+    this.fetchCCTVEntries();
+  }
+
+  fetchCCTVEntries = () => {
+    // Fetch CCTV entries from the server
     fetch('http://localhost:8080/cctv/getAll')
       .then(response => response.json())
       .then(data => this.setState({ items: data }))
       .catch(error => console.log('Error fetching data:', error));
-  }
+  };
 
 
   handleSearchInputChange = (event) => {
@@ -74,11 +87,19 @@ class CCTV extends Component {
   };
 
   handleDelete = () => {
-    this.setState({ showMessage2: true });
-    setTimeout(() => {
-      this.setState({ showMessage2: false });
-    }, 5000); // 10 seconds
-    // setShowPopup(true);
+      const { selectedItem } = this.state;
+      if (selectedItem) {
+        // Delete the selected CCTV entry
+        axios.delete(`http://localhost:8080/cctv/${selectedItem.id}`)
+          .then(response => {
+            // Refresh CCTV entries after deletion
+            this.fetchCCTVEntries();
+            this.setState({ selectedItem: null }); // Clear selected item after deletion
+          })
+          .catch(error => {
+            console.error('Error deleting selected CCTV entry:', error);
+          });
+      }
   };
 
   render() {
@@ -89,7 +110,7 @@ class CCTV extends Component {
 
     return (
       <Container fluid className='main-page'>
-        <Row className="h-350">
+        <Row className="h-100" style={{ maxHeight: '500px'}}>
           <Col md={3} className='side-bar p-3'>
             <h3 className="text-light mb-3">CCTVs</h3>
             <Form.Control
@@ -98,14 +119,16 @@ class CCTV extends Component {
               className="mb-3"
             />
             {/* List of CCTV cameras */}
-            {items.slice(0, 7).map(item => (
+            <div style={{ maxHeight: '350px', overflowY: 'auto', marginBottom: '15px'}}>
+            {items.map(item => (
               <div className='side-bar-content mb-2 p-2' key={item.id} onClick={() => this.handleItemClick(item)}>
                 CCTV#{item.id}
               </div>
             ))}
+            </div>
             {this.state.showMessage1 && <p style={{ color: 'white' }}>CCTV Successfully Added!</p>}
             <div className="d-flex justify-content-end">
-              <Button onClick={this.handleAddButtonClick} variant="primary" type="submit">
+              <Button onClick={this.toggleForm} variant="primary" type="submit" style={{ maxHeight: '400px', overflowY: 'auto'}}>
                 Add CCTV
               </Button>
             </div>
@@ -122,32 +145,7 @@ class CCTV extends Component {
               />
               <Button variant="primary" type="submit">Search</Button>
             </Form>
-            {/* {showPopup && (
-              <div className="popup">
-                <div className="popup-inner">
-                  <button onClick={handlePopupClose}>Close</button>
-                  <form onSubmit={handleFormSubmit}>
-                    <label>
-                      CCTV Name:
-                      <input
-                        type="text"
-                        value={cctvName}
-                        onChange={(e) => setCCTVName(e.target.value)}
-                      />
-                    </label>
-                    <label>
-                      CCTV Location:
-                      <input
-                        type="text"
-                        value={cctvLocation}
-                        onChange={(e) => setCCTVLocation(e.target.value)}
-                      />
-                    </label>
-                    <button type="submit">Add CCTV</button>
-                  </form>
-                </div>
-              </div>
-            )} */}
+            {this.state.showForm && <PopupForm />}
             <MapContainer center={mapCenter} zoom={13}  ref={this.mapRef}>
               <TileLayer
                 url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
@@ -160,6 +158,7 @@ class CCTV extends Component {
                   </Popup>
                 </Marker>
               )}
+              {/* {this.state.showForm && <PopupForm />} */}
             </MapContainer>
             <div className='mt-auto'>
             <div className='device-details p-3 mt-3'>

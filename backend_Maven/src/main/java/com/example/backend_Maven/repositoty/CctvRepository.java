@@ -10,5 +10,5 @@ import java.util.List;
 
 @Repository
 public interface CctvRepository extends JpaRepository<Cctv,Integer> {
-    List<Cctv> findByLocationNameOrId(String location_name, Integer id);
+    List<Cctv> findByLocationNameContainingOrId(String location_name, Integer id);
 }

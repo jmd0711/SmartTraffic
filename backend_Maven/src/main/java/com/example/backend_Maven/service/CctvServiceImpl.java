@@ -4,6 +4,7 @@ import com.example.backend_Maven.model.Cctv;
 import com.example.backend_Maven.repositoty.CctvRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
@@ -35,8 +36,14 @@ public class CctvServiceImpl implements CctvService {
     }
 
     @Override
-    public List<Cctv> findByLocationNameOrId(String locationName, Integer id) {
-        return cctvRepository.findByLocationNameOrId(locationName, id);
+    public List<Cctv> findByLocationNameContainingOrId(String locationName, Integer id) {
+        return cctvRepository.findByLocationNameContainingOrId(locationName, id);
+    }
+
+    @Override
+    @Transactional
+    public void deleteCCTVEntry(Integer id) {
+        cctvRepository.deleteById(id);
     }
 
 }
