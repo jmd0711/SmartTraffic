@@ -21,8 +21,12 @@ class CCTV extends Component {
       selectedItem: null,
       markerPosition: null,
       query: '',
+      showMessage1: false,
+      showMessage2: false,
+      mapCenter: [37.7749, -122.4194],
       items: []
     };
+    this.handleAddButtonClick = this.handleAddButtonClick.bind(this);
   }
 
   componentDidMount() {
@@ -53,21 +57,39 @@ class CCTV extends Component {
 
   handleItemClick = (item) => {
     const map = this.mapRef.current;
-    this.setState({selectedItem: item});
-    this.setState({ markerPosition: [item.latitude, item.longitude] });
+    this.setState({selectedItem: item, 
+      mapCenter: [item.latitude, item.longitude], 
+      markerPosition: [item.latitude, item.longitude]
+    });
     const bounds = map.getBounds().extend([item.latitude, item.longitude]);
     map.fitBounds(bounds);
   }
 
+  handleAddButtonClick = () => {
+    this.setState({ showMessage1: true });
+    setTimeout(() => {
+      this.setState({ showMessage1: false });
+    }, 5000); // 10 seconds
+    // setShowPopup(true);
+  };
+
+  handleDelete = () => {
+    this.setState({ showMessage2: true });
+    setTimeout(() => {
+      this.setState({ showMessage2: false });
+    }, 5000); // 10 seconds
+    // setShowPopup(true);
+  };
+
   render() {
     // const position = [37.7749, -122.4194]; // Example position for San Francisco
     // const markerPosition = [37.7749, -122.4194]; // Example marker position
-    const {items, selectedItem, markerPosition, query} = this.state;
+    const {items, selectedItem, markerPosition, query, mapCenter} = this.state;
     
 
     return (
       <Container fluid className='main-page'>
-        <Row className="h-100">
+        <Row className="h-350">
           <Col md={3} className='side-bar p-3'>
             <h3 className="text-light mb-3">CCTVs</h3>
             <Form.Control
@@ -76,13 +98,14 @@ class CCTV extends Component {
               className="mb-3"
             />
             {/* List of CCTV cameras */}
-            {items.slice(0, 8).map(item => (
+            {items.slice(0, 7).map(item => (
               <div className='side-bar-content mb-2 p-2' key={item.id} onClick={() => this.handleItemClick(item)}>
-                CCTV{item.id}
+                CCTV#{item.id}
               </div>
             ))}
+            {this.state.showMessage1 && <p style={{ color: 'white' }}>CCTV Successfully Added!</p>}
             <div className="d-flex justify-content-end">
-              <Button variant="primary" type="submit">
+              <Button onClick={this.handleAddButtonClick} variant="primary" type="submit">
                 Add CCTV
               </Button>
             </div>
@@ -99,7 +122,33 @@ class CCTV extends Component {
               />
               <Button variant="primary" type="submit">Search</Button>
             </Form>
-            <MapContainer center={[37.7749, -122.4194]} zoom={13} onClick={this.handleClick} ref={this.mapRef}>
+            {/* {showPopup && (
+              <div className="popup">
+                <div className="popup-inner">
+                  <button onClick={handlePopupClose}>Close</button>
+                  <form onSubmit={handleFormSubmit}>
+                    <label>
+                      CCTV Name:
+                      <input
+                        type="text"
+                        value={cctvName}
+                        onChange={(e) => setCCTVName(e.target.value)}
+                      />
+                    </label>
+                    <label>
+                      CCTV Location:
+                      <input
+                        type="text"
+                        value={cctvLocation}
+                        onChange={(e) => setCCTVLocation(e.target.value)}
+                      />
+                    </label>
+                    <button type="submit">Add CCTV</button>
+                  </form>
+                </div>
+              </div>
+            )} */}
+            <MapContainer center={mapCenter} zoom={13}  ref={this.mapRef}>
               <TileLayer
                 url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
                 attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
@@ -112,6 +161,7 @@ class CCTV extends Component {
                 </Marker>
               )}
             </MapContainer>
+            <div className='mt-auto'>
             <div className='device-details p-3 mt-3'>
               {selectedItem ? (
                 <div> 
@@ -123,6 +173,7 @@ class CCTV extends Component {
                   (<p>Video URL: <a href={selectedItem.videoUrl} target="_blank" rel="noopener noreferrer">{selectedItem.videoUrl}</a></p>
                   ) : (<p>Video URL: Not Provided </p>)}
                   <img src={selectedItem.imageUrl} alt="Item" height="150"/>
+                  {this.state.showMessage2 && <p style={{ color: 'black' }}>CCTV#{selectedItem.id} Successfully Deleted!</p>}
                 </div>
               ) : (
                 <p>Please select a CCTV to view information</p>
@@ -133,10 +184,11 @@ class CCTV extends Component {
                   <Button variant="primary" type="submit">
                     Update
                   </Button>
-                  <Button className="ms-2" variant="danger" type="submit">
+                  <Button onClick={this.handleDelete} className="ms-2" variant="danger" type="submit">
                     Delete
                   </Button>
                 </div>
+              </div>
               </div>
             </div>
           </Col>
