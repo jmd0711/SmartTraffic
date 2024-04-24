@@ -1,66 +1,84 @@
-import React, { useState, useEffect } from "react"
-import { Component } from "react"
-import { withRouter } from "../withrouter"
-import { Container, Row, Col, Stack, InputGroup, Form, Button } from "react-bootstrap"
-
-import { MapContainer, TileLayer, useMap, Popup, Marker, useMapEvents } from 'react-leaflet'
-import * as L from "leaflet";
 import 'leaflet/dist/leaflet.css';
-import { Icon, divIcon, point } from "leaflet";
-
-import MarkerClusterGroup from "react-leaflet-cluster";
-
-
-let allmarkers = [
-  {
-    geocode: [37.3, -121.9],
-    popUp: "Drone 1" //'https://www.youtube.com/embed/LE3kyE_pMGE?si=bh2LIRTwotaa5tqP'
-  },
-  {
-    geocode: [37.4, -121.8],
-    popUp: "Drone 2"
-  },
-  {
-    geocode: [37.5, -121.7],
-    popUp: "Drone 3"
-  }
-];
-
-const customIcon = new Icon({
-  iconUrl: require("./smart-drone.png"),
-  iconSize: [38, 38]
+import React, { Component, useEffect, useState } from 'react';
+import { withRouter } from "../withrouter";
+// import axios from 'axios';
+import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet';
+import { Container, Row, Col, Form, Button } from 'react-bootstrap';
+import L from 'leaflet';
+delete L.Icon.Default.prototype._getIconUrl;
+L.Icon.Default.mergeOptions({
+  iconRetinaUrl: require('leaflet/dist/images/marker-icon-2x.png'),
+  iconUrl: require('./smart-drone.png'),
+  shadowUrl: require('leaflet/dist/images/marker-shadow.png'),
 });
-const createClusterCustomIcon = function (cluster) {
-  return new divIcon({
-    html: `<span class="cluster-icon">${cluster.getChildCount()}</span>`,
-    className: "custom-marker-cluster",
-    iconSize: point(33, 33, true)
-  });
-};
-
-
 
 class Drone extends Component {
-  constructor() {
-    super()
+  constructor(props) {
+    super(props);
+    this.mapRef = React.createRef();
+    this.state = {
+      selectedItem: null,
+      markerPosition: null,
+      query: '',
+      items: []
+    };
+  }
+
+  componentDidMount() {
+    fetch('http://localhost:8080/drone/getAll')
+      .then(response => response.json())
+      .then(data => this.setState({ items: data }))
+      .catch(error => console.log('Error fetching data:', error));
+  }
+
+
+  // handleSearchInputChange = (event) => {
+  //   this.setState({ query: event.target.value });
+  // };
+
+  // handleSearch = (event) => {
+  //   event.preventDefault();
+  //   const { query } = this.state;
+
+  //   axios.get(`http://localhost:8080/drone/search?locationName=${query}&id=${parseInt(query.replace( /[^\d.]/g, '' ))}`)
+  //     .then(response => {
+  //       this.setState({ items: response.data });
+  //     })
+  //     .catch(error => {
+  //       console.error('Error fetching search results:', error);
+  //     });
+  // };
+
+
+  handleItemClick = (item) => {
+    const map = this.mapRef.current;
+    this.setState({selectedItem: item});
+    this.setState({ markerPosition: [item.latitude, item.longitude] });
+    const bounds = map.getBounds().extend([item.latitude, item.longitude]);
+    map.fitBounds(bounds);
   }
 
   render() {
+
+    const {items, selectedItem, markerPosition, query} = this.state;
+    
+
     return (
       <Container fluid className='main-page'>
-        <Row className='h-100'>
-
-          <Col md={3} className="side-bar p-3">
+        <Row className="h-100">
+          <Col md={3} className='side-bar p-3'>
             <h3 className="text-light mb-3">Drones</h3>
             <Form.Control
               type="text"
               placeholder="Filter"
               className="mb-3"
             />
-            {/* List of Drone cameras */}
-            <div className='side-bar-content mb-2 p-2'>Drone #1</div>
-            <div className='side-bar-content mb-2 p-2'>Drone #2</div>
-            <div className='side-bar-content mb-2 p-2'>Drone #3</div>
+            {/* List of drone cameras */}
+            {items.slice(0, 5).map(item => (
+              <div className='side-bar-content mb-2 p-2' key={item.id} onClick={() => this.handleItemClick(item)}>
+              Drone #{item.id}
+              </div>
+            ))}
             <div className="d-flex justify-content-end">
               <Button variant="primary" type="submit">
                 Add Drone
@@ -71,30 +89,44 @@ class Drone extends Component {
             <Form className="d-flex mb-3" onSubmit={this.handleSearch}>
               <Form.Control
                 type="text"
-                placeholder="Search Area or Drone id"
+                placeholder="Search Area or Drone Id"
+                // value={this.state.query}
+                // onChange={this.handleSearchInputChange}
                 className="me-3"
                 style={{ flexGrow: 1 }}
               />
               <Button variant="primary" type="submit">Search</Button>
             </Form>
-            <MapContainer center={[37.334665328, -121.875329832]} zoom={12} scrollWheelZoom={true}>
+            <MapContainer center={[37.334665328, -121.875329832]} zoom={13} onClick={this.handleClick} ref={this.mapRef}>
               <TileLayer
                 url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-                attribution='&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
+                attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
               />
-              <MarkerClusterGroup
-                chunkedLoading
-                iconCreateFunction={createClusterCustomIcon}
-              >
-                {allmarkers.map((marker) => (
-                  <Marker position={marker.geocode} icon={customIcon} draggable={true}>
-                    <Popup>{marker.popUp} </Popup>
-                  </Marker>
-                ))}
-              </MarkerClusterGroup>
+              {markerPosition && ( // Render Marker only if position is defined
+                <Marker position={markerPosition}>
+                  <Popup>
+                    Drone <br />
+                  </Popup>
+                </Marker>
+              )}
             </MapContainer>
-            <div className='device-details p-3 mt-3'>Drone #1
-              <div className="d-flex align-items-end flex-column" style={{ height: '90%' }}>
+            <div className='device-details p-3 mt-3'>
+            <div className="d-flex align-items-end flex-column" style={{ height: '90%' }}>
+
+              {selectedItem ? (
+                <div> 
+                  <h5>Drone #{selectedItem.id} Details</h5>
+                  <p>Address: {selectedItem.locationName}</p>
+                  <p>Latitude, Longitude: {selectedItem.latitude}, {selectedItem.longitude}</p>
+                  <p>In Service: {selectedItem.inService}</p>
+                  <p>Video URL: <iframe width="560" height="315" src={selectedItem.videoUrl} title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe></p>
+
+                  <img src={selectedItem.imageUrl} alt="Item" height="150"/>
+                </div>
+              ) : (
+                <p>Please select a Drone to view information</p>
+              )}
+
                 <div className='mt-auto'>
                   <Button variant="primary" type="submit">
                     Update
@@ -108,7 +140,7 @@ class Drone extends Component {
           </Col>
         </Row>
       </Container>
-    )
+    );
   }
 }
 
