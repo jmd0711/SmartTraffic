@@ -33,4 +33,10 @@ public class CctvServiceImpl implements CctvService {
     public void delete(Integer id) {
         cctvRepository.deleteById(id);
     }
+
+    @Override
+    public List<Cctv> findByLocationNameOrId(String locationName, Integer id) {
+        return cctvRepository.findByLocationNameOrId(locationName, id);
+    }
+
 }
