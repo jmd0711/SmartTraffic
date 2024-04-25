@@ -21,11 +21,11 @@ class CCTV extends Component {
     this.state = {
       selectedItem: null,
       markerPosition: null,
-      query: '',
       showMessage1: false,
       showMessage2: false,
       mapCenter: [37.7749, -122.4194],
       showForm: false,
+      admin: false,
       items: []
     };
     this.handleAddButtonClick = this.handleAddButtonClick.bind(this);
@@ -99,18 +99,22 @@ class CCTV extends Component {
           .catch(error => {
             console.error('Error deleting selected CCTV entry:', error);
           });
+          this.setState({ showMessage2: true });
+          setTimeout(() => {
+            this.setState({ showMessage2: false });
+          }, 5000);
       }
   };
 
   render() {
     // const position = [37.7749, -122.4194]; // Example position for San Francisco
     // const markerPosition = [37.7749, -122.4194]; // Example marker position
-    const {items, selectedItem, markerPosition, query, mapCenter} = this.state;
+    const {items, selectedItem, markerPosition, admin, mapCenter} = this.state;
     
 
     return (
       <Container fluid className='main-page'>
-        <Row className="h-100" style={{ maxHeight: '500px'}}>
+        <Row className="h-100" style={{ maxHeight: '600px'}}>
           <Col md={3} className='side-bar p-3'>
             <h3 className="text-light mb-3">CCTVs</h3>
             <Form.Control
@@ -128,9 +132,10 @@ class CCTV extends Component {
             </div>
             {this.state.showMessage1 && <p style={{ color: 'white' }}>CCTV Successfully Added!</p>}
             <div className="d-flex justify-content-end">
-              <Button onClick={this.toggleForm} variant="primary" type="submit" style={{ maxHeight: '400px', overflowY: 'auto'}}>
+              {admin && <Button onClick={this.toggleForm} variant="primary" type="submit" style={{ maxHeight: '400px', overflowY: 'auto'}}>
                 Add CCTV
-              </Button>
+              </Button>}
+              {!admin && null}
             </div>
           </Col>
           <Col className="main-body d-flex flex-column p-3">
@@ -180,12 +185,16 @@ class CCTV extends Component {
 
               <div className="d-flex align-items-end flex-column" style={{ height: '90%' }}>
                 <div className='mt-auto'>
-                  <Button variant="primary" type="submit">
-                    Update
-                  </Button>
-                  <Button onClick={this.handleDelete} className="ms-2" variant="danger" type="submit">
-                    Delete
-                  </Button>
+                {admin && 
+                  <div>
+                    <Button variant="primary" type="submit">
+                      Update
+                    </Button>
+                    <Button onClick={this.handleDelete} className="ms-2" variant="danger" type="submit">
+                      Delete
+                    </Button>
+                  </div>}
+                {!admin && null}
                 </div>
               </div>
               </div>
