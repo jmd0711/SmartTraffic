@@ -1,9 +1,6 @@
 package com.example.backend_Maven.model;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 
 
 //CREATE TABLE drone (
@@ -22,6 +19,7 @@ public class Drone {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
+    @Column(name = "location_name")
     private String locationName;
     private String nearby_place;
     private String longitude;

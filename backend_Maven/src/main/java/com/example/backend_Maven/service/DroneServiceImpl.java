@@ -4,6 +4,7 @@ import com.example.backend_Maven.model.Drone;
 import com.example.backend_Maven.repositoty.DroneRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
@@ -33,4 +34,16 @@ public class DroneServiceImpl implements DroneService {
     public void delete(Integer id) {
         droneRepository.deleteById(id);
     }
+
+    @Override
+    public List<Drone> findByLocationNameContainingOrId(String locationName, Integer id) {
+        return droneRepository.findByLocationNameContainingOrId(locationName, id);
+    }
+
+    @Override
+    @Transactional
+    public void deleteDroneEntry(Integer id) {
+        droneRepository.deleteById(id);
+    }
+
 }
