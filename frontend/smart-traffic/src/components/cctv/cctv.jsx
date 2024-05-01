@@ -25,7 +25,7 @@ class CCTV extends Component {
       showMessage2: false,
       mapCenter: [37.7749, -122.4194],
       showForm: false,
-      admin: false,
+      admin: true,
       items: []
     };
     this.handleAddButtonClick = this.handleAddButtonClick.bind(this);
@@ -119,7 +119,7 @@ class CCTV extends Component {
             <h3 className="text-light mb-3">CCTVs</h3>
             <Form.Control
               type="text"
-              placeholder="Filter"
+              placeholder="Search Area or CCTV Number"
               className="mb-3"
             />
             {/* List of CCTV cameras */}
@@ -142,7 +142,7 @@ class CCTV extends Component {
             <Form className="d-flex mb-3" onSubmit={this.handleSearch}>
               <Form.Control
                 type="text"
-                placeholder="Search Area or CCTV Number"
+                placeholder="Search Address"
                 value={this.state.query}
                 onChange={this.handleSearchInputChange}
                 className="me-3"
