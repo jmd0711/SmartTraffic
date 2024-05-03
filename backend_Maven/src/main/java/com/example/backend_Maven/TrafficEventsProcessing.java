@@ -1,5 +1,7 @@
 package com.example.backend_Maven;
 
+import com.example.backend_Maven.utils.APIProps;
+import com.example.backend_Maven.utils.APIProps.*;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.http.client.methods.CloseableHttpResponse;
@@ -15,9 +17,6 @@ import java.sql.Statement;
 import java.sql.SQLException;
 
 public class TrafficEventsProcessing {
-    private static final String API_KEY = "####";
-    private static final String API_AREA_CODE = "5393021";
-    private static final String API_URL = String.format("http://api.511.org/traffic/events?api_key=%s&area=%s", API_KEY, API_AREA_CODE);
     private static final String DB_URL = "jdbc:mysql://localhost:3306/smart-traffic";
     private static final String DB_USER = "root";
     private static final String DB_PASSWORD = "";
@@ -29,7 +28,7 @@ public class TrafficEventsProcessing {
 
             // Make HTTP GET request to the API
             CloseableHttpClient httpClient = HttpClients.createDefault();
-            HttpGet httpGet = new HttpGet(API_URL);
+            HttpGet httpGet = new HttpGet(APIProps.API_URL);
             CloseableHttpResponse response = httpClient.execute(httpGet);
 
             // Parse JSON response
