@@ -31,6 +31,11 @@ class PopupForm extends Component {
     });
   };
 
+  handleCancel = () => {
+    this.toggleForm();
+    window.location.reload();
+  };
+
   handleSubmit = async (e) => {
     e.preventDefault();
     const {locationName, nearbyPlace, longitude, latitude, inService, videoUrl, imageUrl } = this.state;
@@ -143,9 +148,14 @@ class PopupForm extends Component {
                 value={this.state.imageUrl}
                 onChange={this.handleChange}
               />
-              <Button variant="primary" style={{ marginLeft: '300px'}} type="submit">
-              Submit
-            </Button>
+              <div>
+                <Button onClick={this.handleCancel} variant="danger" style={{ marginLeft: '405px'}} type="submit">
+                Cancel
+                </Button>
+                <Button variant="primary" style={{ marginLeft: '15px'}} type="submit">
+                Submit
+                </Button>
+              </div>
             </form>
             {/* <button style={{ marginBottom: '15px'}} type="submit">Submit</button> */}
           </div>
