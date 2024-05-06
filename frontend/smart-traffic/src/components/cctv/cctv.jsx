@@ -1,11 +1,14 @@
 import 'leaflet/dist/leaflet.css';
-import React, { Component, useEffect, useState } from 'react';
+import React, { Component } from 'react';
 import { withRouter } from "../withrouter";
 import PopupForm from './popupForm';
 import axios from 'axios';
-import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet';
+import { MapContainer, TileLayer, Marker, Popup, useMap } from 'react-leaflet';
 import { Container, Row, Col, Form, Button } from 'react-bootstrap';
 import L from 'leaflet';
+import { fromAddress } from 'react-geocode';
+import '../geocodeapi';
+import MarkerClusterGroup from "react-leaflet-cluster";
 delete L.Icon.Default.prototype._getIconUrl;
 L.Icon.Default.mergeOptions({
   iconRetinaUrl: require('leaflet/dist/images/marker-icon-2x.png'),
@@ -26,10 +29,14 @@ class CCTV extends Component {
       mapCenter: [37.7749, -122.4194],
       showForm: false,
       admin: true,
+      search: '',
+      error: {},
       items: []
     };
     this.handleAddButtonClick = this.handleAddButtonClick.bind(this);
-  }
+    this.onChange = this.onChange.bind(this)
+    this.handleSearch = this.handleSearch.bind(this)
+  };
 
   toggleForm = () => {
     this.setState(prevState => ({
@@ -39,7 +46,7 @@ class CCTV extends Component {
 
   componentDidMount() {
     this.fetchCCTVEntries();
-  }
+  };
 
   fetchCCTVEntries = () => {
     // Fetch CCTV entries from the server
@@ -49,12 +56,29 @@ class CCTV extends Component {
       .catch(error => console.log('Error fetching data:', error));
   };
 
+  handleSearch = (e) => {
+    e.preventDefault();
+    //console.log(this.state.search);
+
+    fromAddress(this.state.search)
+      .then(({ results }) => {
+        const { lat, lng } = results[0].geometry.location
+        const map = this.mapRef.current
+        map.setView([lat, lng], map.getZoom())
+      })
+      .catch(console.error)
+  };
+
+  onChange(e) {
+    this.setState({ [e.target.name]: e.target.value })
+  }
 
   handleSearchInputChange = (event) => {
     this.setState({ query: event.target.value });
   };
 
-  handleSearch = (event) => {
+
+  handleFilter = (event) => {
     event.preventDefault();
     const { query } = this.state;
 
@@ -70,13 +94,15 @@ class CCTV extends Component {
 
   handleItemClick = (item) => {
     const map = this.mapRef.current;
-    this.setState({selectedItem: item, 
-      mapCenter: [item.latitude, item.longitude], 
+    this.setState({selectedItem: item,  
       markerPosition: [item.latitude, item.longitude]
     });
-    const bounds = map.getBounds().extend([item.latitude, item.longitude]);
-    map.fitBounds(bounds);
-  }
+    if (map != null) {
+      map.setView([item.latitude, item.longitude], map.getZoom());
+    }
+    // const bounds = map.getBounds().extend([item.latitude, item.longitude]);
+    // map.fitBounds(bounds);
+  };
 
   handleAddButtonClick = () => {
     this.setState({ showMessage1: true });
@@ -117,11 +143,24 @@ class CCTV extends Component {
         <Row className="h-100" style={{ maxHeight: '600px'}}>
           <Col md={3} className='side-bar p-3'>
             <h3 className="text-light mb-3">CCTVs</h3>
-            <Form.Control
+            {/* <Form.Control
               type="text"
               placeholder="Search Area or CCTV Number"
               className="mb-3"
-            />
+              value={this.state.query}
+              onChange={this.handleSearchInputChange}
+            /> */}
+            <Form className="d-flex mb-3" onSubmit={this.handleFilter}>
+              <Form.Control
+                type="text"
+                placeholder="CCTV Number/Name"
+                value={this.state.query}
+                onChange={this.handleSearchInputChange}
+                className="me-3"
+                style={{ flexGrow: 1 }}
+              />
+              <Button variant="primary" type="submit">Filter</Button>
+            </Form>
             {/* List of CCTV cameras */}
             <div style={{ maxHeight: '350px', overflowY: 'auto', marginBottom: '15px'}}>
             {items.map(item => (
@@ -142,28 +181,37 @@ class CCTV extends Component {
             <Form className="d-flex mb-3" onSubmit={this.handleSearch}>
               <Form.Control
                 type="text"
-                placeholder="Search Address"
-                value={this.state.query}
-                onChange={this.handleSearchInputChange}
+                placeholder="Search Area"
+                name="search"
+                value={this.state.search}
+                onChange={this.onChange}
                 className="me-3"
                 style={{ flexGrow: 1 }}
               />
               <Button variant="primary" type="submit">Search</Button>
             </Form>
             {this.state.showForm && <PopupForm />}
-            <MapContainer center={mapCenter} zoom={13}  ref={this.mapRef}>
+            <MapContainer center={mapCenter} zoom={13} ref={this.mapRef}>
               <TileLayer
                 url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-                attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
               />
-              {markerPosition && ( // Render Marker only if position is defined
+              <MarkerClusterGroup>
+                {items.map(marker => (
+                  <Marker key={marker.id} position={[marker.latitude, marker.longitude]} >
+                    {/* onClick={() => this.handleItemClick(marker)} */}
+                    <Popup>
+                      CCTV#{marker.id}. <br /> Name: {marker.locationName} <br /> Latitude: {marker.latitude}, Longitude: {marker.longitude}.
+                    </Popup>
+                  </Marker>
+                ))}
+              </MarkerClusterGroup>
+              {/* {markerPosition && ( // Render Marker only if position is defined
                 <Marker position={markerPosition}>
                   <Popup>
                     CCTV <br />
                   </Popup>
                 </Marker>
-              )}
-              {/* {this.state.showForm && <PopupForm />} */}
+              )} */}
             </MapContainer>
             <div className='mt-auto'>
             <div className='device-details p-3 mt-3'>
