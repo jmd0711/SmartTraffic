@@ -3,11 +3,9 @@ import React, { Component, useEffect, useState } from 'react';
 import { withRouter } from "../withrouter";
 import PopupForm from './popupForm';
 import axios from 'axios';
-import { MapContainer, TileLayer, Marker, Popup, useMap } from 'react-leaflet';
+import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet';
 import { Container, Row, Col, Form, Button } from 'react-bootstrap';
 import L from 'leaflet';
-import { fromAddress } from 'react-geocode';
-import '../geocodeapi';
 delete L.Icon.Default.prototype._getIconUrl;
 L.Icon.Default.mergeOptions({
   iconRetinaUrl: require('leaflet/dist/images/marker-icon-2x.png'),
@@ -28,13 +26,9 @@ class CCTV extends Component {
       mapCenter: [37.7749, -122.4194],
       showForm: false,
       admin: true,
-      search: '',
-      error: {},
       items: []
     };
     this.handleAddButtonClick = this.handleAddButtonClick.bind(this);
-    this.onChange = this.onChange.bind(this)
-    this.handleSearch = this.handleSearch.bind(this)
   }
 
   toggleForm = () => {
@@ -55,29 +49,12 @@ class CCTV extends Component {
       .catch(error => console.log('Error fetching data:', error));
   };
 
-  handleSearch = (e) => {
-    e.preventDefault();
-    //console.log(this.state.search);
-
-    fromAddress(this.state.search)
-      .then(({ results }) => {
-        const { lat, lng } = results[0].geometry.location
-        const map = this.mapRef.current
-        map.setView([lat, lng], map.getZoom())
-      })
-      .catch(console.error)
-  };
-
-  onChange(e) {
-    this.setState({ [e.target.name]: e.target.value })
-  }
 
   handleSearchInputChange = (event) => {
     this.setState({ query: event.target.value });
   };
 
-
-  handleFilter = (event) => {
+  handleSearch = (event) => {
     event.preventDefault();
     const { query } = this.state;
 
@@ -144,7 +121,6 @@ class CCTV extends Component {
               type="text"
               placeholder="Search Area or CCTV Number"
               className="mb-3"
-              onSubmit={this.handleFilter}
             />
             {/* List of CCTV cameras */}
             <div style={{ maxHeight: '350px', overflowY: 'auto', marginBottom: '15px'}}>
@@ -166,17 +142,16 @@ class CCTV extends Component {
             <Form className="d-flex mb-3" onSubmit={this.handleSearch}>
               <Form.Control
                 type="text"
-                placeholder="Search Area"
-                name="search"
-                value={this.state.search}
-                onChange={this.onChange}
+                placeholder="Search Address"
+                value={this.state.query}
+                onChange={this.handleSearchInputChange}
                 className="me-3"
                 style={{ flexGrow: 1 }}
               />
               <Button variant="primary" type="submit">Search</Button>
             </Form>
             {this.state.showForm && <PopupForm />}
-            <MapContainer center={mapCenter} zoom={13} scrollWheelZoom={false} ref={this.mapRef}>
+            <MapContainer center={mapCenter} zoom={13}  ref={this.mapRef}>
               <TileLayer
                 url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
                 attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
