@@ -15,9 +15,10 @@ import java.sql.Statement;
 import java.sql.SQLException;
 
 public class TrafficEventsProcessing {
-    private static final String API_KEY = "####";
+    private static final String API_KEY = "AIzaSyCC0nehjtBB_RPR3LkOOqpniJHZUK9JLqE";
+
     private static final String API_AREA_CODE = "5393021";
-    private static final String API_URL = String.format("http://api.511.org/traffic/events?api_key=%s&area=%s", API_KEY, API_AREA_CODE);
+    private static final String API_URL = String.format("http://api.511.org/traffic/events?api_key=a541262b-ac22-4761-89d2-f193e9dcb864", API_KEY, API_AREA_CODE);
     private static final String DB_URL = "jdbc:mysql://localhost:3306/smart-traffic";
     private static final String DB_USER = "root";
     private static final String DB_PASSWORD = "";
