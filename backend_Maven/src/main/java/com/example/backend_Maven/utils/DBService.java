@@ -1,5 +1,6 @@
 package com.example.backend_Maven.utils;
 
+import com.example.backend_Maven.TrafficEventsProcessing;
 import com.example.backend_Maven.dataProcessing;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -19,5 +20,6 @@ public class DBService {
     public void runAnotherJavaProgram() {
         // Call the main method of the other Java program
         dataProcessing.main(new String[] {});
+        TrafficEventsProcessing.main(new String[] {});
     }
 }

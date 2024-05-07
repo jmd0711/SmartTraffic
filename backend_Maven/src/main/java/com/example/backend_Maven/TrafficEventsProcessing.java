@@ -23,9 +23,6 @@ public class TrafficEventsProcessing {
 
     public static void main(String[] args) {
         try {
-            // Clear Table
-            clearTable();
-
             // Make HTTP GET request to the API
             CloseableHttpClient httpClient = HttpClients.createDefault();
             HttpGet httpGet = new HttpGet(APIProps.API_URL);
