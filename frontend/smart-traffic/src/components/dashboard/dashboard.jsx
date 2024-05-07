@@ -12,7 +12,7 @@ import StreamChart from './streamchart'
 import '../geocodeapi';
 import './eventapi';
 import { fromAddress } from 'react-geocode';
-import { getEvents } from './eventapi';
+import { getEvents, searchEvents } from './eventapi';
 import MarkerClusterGroup from 'react-leaflet-cluster';
 delete L.Icon.Default.prototype._getIconUrl;
 L.Icon.Default.mergeOptions({
@@ -95,6 +95,29 @@ class Dashboard extends Component {
       .catch(console.error)
   };
 
+  getFilteredEvents = async () => {
+
+    const { query } = this.state;
+    let data = [];
+    data = await searchEvents(query);
+    if (typeof data != "undefined")
+      this.setState({ items: data })
+    else
+      this.setState({ items: [] })
+  }
+
+  handleFilterChange = (event) => {
+    this.setState({ query: event.target.value });
+  };
+
+  handleFilter = (event) => {
+    event.preventDefault();
+    if (this.state.query == "")
+      this.getEventData()
+    else
+      this.getFilteredEvents();
+  };
+
   onChange(e) {
     this.setState({ [e.target.name]: e.target.value })
   }
@@ -106,19 +129,26 @@ class Dashboard extends Component {
         <Row className='h-100'>
           <Col md={3} className='side-bar p-3 ms-3 me-0'>
             <h3 className="text-light mb-3">Events</h3>
-            <Form.Control
-              type="text"
-              placeholder="Filter"
-              className="mb-3"
-            />
+            <Form className="d-flex mb-3" onSubmit={this.handleFilter}>
+              <Form.Control
+                type="text"
+                placeholder="Filter"
+                value={this.state.query}
+                onChange={this.handleFilterChange}
+                className="me-3"
+                style={{ flexGrow: 1 }}
+              />
+              <Button variant="primary" type="submit">Filter</Button>
+            </Form>
             {/* List of road incidents */}
             <Accordion style={{ maxHeight: '750px', overflowY: 'auto', marginBottom: '15px' }}>
-              {items.map(item => (
-                <Accordion.Item eventKey={item.id} className='side-bar-content mb-2 p-2' key={item.id} onClick={() => this.handleItemClick(item)}>
-                  <Accordion.Header>{item.eventType} #{item.id}</Accordion.Header>
-                  <Accordion.Body>{item.headline}</Accordion.Body>
-                </Accordion.Item>
-              ))}
+              {items.length > 0 &&
+                items.map(item => (
+                  <Accordion.Item eventKey={item.id} className='side-bar-content mb-2 p-2' key={item.id} onClick={() => this.handleItemClick(item)}>
+                    <Accordion.Header>{item.eventType} #{item.id}</Accordion.Header>
+                    <Accordion.Body>{item.headline}</Accordion.Body>
+                  </Accordion.Item>
+                ))}
             </Accordion>
           </Col>
           <Col className='main-body d-flex flex-column p-3 ms-3 me-0'>
@@ -140,13 +170,14 @@ class Dashboard extends Component {
                 attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
               />
               <MarkerClusterGroup>
-                {items.map(item => (
-                  <Marker key={item.id} position={[item.latitude, item.longitude]}>
-                    <Popup>
-                      {item.eventType} #{item.id}. <br /> Type: {item.subType} <br /> Severity: {item.severity} <br /> Latitude: {item.latitude}, Longitude: {item.longitude}.
-                    </Popup>
-                  </Marker>
-                ))}
+                {items.length > 0 &&
+                  items.map(item => (
+                    <Marker key={item.id} position={[item.latitude, item.longitude]}>
+                      <Popup>
+                        {item.eventType} #{item.id}. <br /> Name: {item.locationName} <br /> Type: {item.subType} <br /> Severity: {item.severity} <br /> Latitude: {item.latitude}, Longitude: {item.longitude}.
+                      </Popup>
+                    </Marker>
+                  ))}
               </MarkerClusterGroup>
             </MapContainer>
             <div className='device-details mt-3'>
@@ -161,7 +192,7 @@ class Dashboard extends Component {
               <StreamChart />
             </div>
             <div className='device-details mt-3'>
-              <BarChart data={this.state.severityData}/>
+              <BarChart data={this.state.severityData} />
             </div>
           </Col>
         </Row>

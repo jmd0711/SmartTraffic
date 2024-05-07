@@ -1,5 +1,6 @@
 package com.example.backend_Maven.service;
 
+import com.example.backend_Maven.model.Cctv;
 import com.example.backend_Maven.model.Event;
 import com.example.backend_Maven.repositoty.EventRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,5 +16,10 @@ public class EventServiceImpl implements EventService {
     @Override
     public List<Event> getAllEvents() {
         return eventRepository.findAll();
+    }
+
+    @Override
+    public List<Event> findByLocationNameContainingOrId(String locationName, Integer id) {
+        return eventRepository.findByLocationNameContainingOrId(locationName, id);
     }
 }

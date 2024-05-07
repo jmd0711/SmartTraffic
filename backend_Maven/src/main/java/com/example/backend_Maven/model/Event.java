@@ -1,15 +1,14 @@
 package com.example.backend_Maven.model;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 
 @Entity
 public class Event {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
+    @Column(name = "location_name")
+    private String locationName;
     private String headline;
     private String eventType;
     private String subType;
@@ -27,6 +26,10 @@ public class Event {
     public void setId(Integer id) {
         this.id = id;
     }
+
+    public String getLocationName() { return locationName; }
+
+    public void setLocationName(String locationName) { this.locationName = locationName; }
 
     public String getHeadline() {
         return headline;

@@ -46,9 +46,12 @@ public class TrafficEventsProcessing {
                 JsonNode coordinatesArray = event.get("geography").get("coordinates");
                 String longitude = coordinatesArray.get(0).asText();
                 String latitude = coordinatesArray.get(1).asText();
+                String area = event.get("areas").get(0).get("name").asText();
+                String road = event.get("roads").get(0).get("name").asText();
+                String locationName = String.format("%s, %s", road, area);
 
                 // Insert into MySQL table
-                String sql = "INSERT INTO event (headline, event_type, sub_type, severity, longitude, latitude) VALUES (?, ?, ?, ?, ?, ?)";
+                String sql = "INSERT INTO event (headline, event_type, sub_type, severity, longitude, latitude, location_name) VALUES (?, ?, ?, ?, ?, ?, ?)";
                 PreparedStatement pstmt = dbConnection.prepareStatement(sql);
                 pstmt.setString(1, headline);
                 pstmt.setString(2, eventType);
@@ -56,6 +59,7 @@ public class TrafficEventsProcessing {
                 pstmt.setString(4, severity);
                 pstmt.setString(5, longitude);
                 pstmt.setString(6, latitude);
+                pstmt.setString(7, locationName);
 
                 pstmt.executeUpdate();
             }
