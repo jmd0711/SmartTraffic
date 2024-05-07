@@ -14,6 +14,7 @@ class RadialBarChart extends Component {
         padding={0.4}
         cornerRadius={2}
         margin={{ top: 40, right: 120, bottom: 40, left: 40 }}
+        colors={{ scheme:'set2' }}
         radialAxisStart={{ tickSize: 5, tickPadding: 5, tickRotation: 0 }}
         circularAxisOuter={{ tickSize: 5, tickPadding: 12, tickRotation: 0 }}
         legends={[

@@ -1,64 +1,40 @@
 [
     {
-      "id": "Supermarket",
+      "id": "CCTVs",
       "data": [
         {
-          "x": "Vegetables",
-          "y": 121
+          "x": "Available",
+          "y": 2719
         },
         {
-          "x": "Fruits",
-          "y": 69
-        },
-        {
-          "x": "Meat",
-          "y": 83
-        },
-        {
-          "x": "Fish",
-          "y": 293
+          "x": "Unavailable",
+          "y": 112
         }
       ]
     },
     {
-      "id": "Combini",
+      "id": "Drones",
       "data": [
         {
-          "x": "Vegetables",
-          "y": 127
+          "x": "Available",
+          "y": 0
         },
         {
-          "x": "Fruits",
-          "y": 259
-        },
-        {
-          "x": "Meat",
-          "y": 148
-        },
-        {
-          "x": "Fish",
-          "y": 41
+          "x": "Unavailable",
+          "y": 0
         }
       ]
     },
     {
-      "id": "Online",
+      "id": "IoTs",
       "data": [
         {
-          "x": "Vegetables",
-          "y": 158
+          "x": "Available",
+          "y": 0
         },
         {
-          "x": "Fruits",
-          "y": 49
-        },
-        {
-          "x": "Meat",
-          "y": 252
-        },
-        {
-          "x": "Fish",
-          "y": 182
+          "x": "Unavailable",
+          "y": 0
         }
       ]
     }

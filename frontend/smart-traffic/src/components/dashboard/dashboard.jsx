@@ -1,8 +1,8 @@
 import 'leaflet/dist/leaflet.css';
 import '../components.css';
-import React, { Component, useEffect, useState } from 'react';
+import React, { Component } from 'react';
 import { withRouter } from "../withrouter";
-import { MapContainer, TileLayer, Marker, Popup, useMap } from 'react-leaflet';
+import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet';
 import { Container, Row, Col, Form, Button, Accordion } from 'react-bootstrap';
 import L from 'leaflet';
 import BarChart from './barchart'
@@ -13,6 +13,7 @@ import '../geocodeapi';
 import './eventapi';
 import { fromAddress } from 'react-geocode';
 import { getEvents } from './eventapi';
+import MarkerClusterGroup from 'react-leaflet-cluster';
 delete L.Icon.Default.prototype._getIconUrl;
 L.Icon.Default.mergeOptions({
   iconRetinaUrl: require('leaflet/dist/images/marker-icon-2x.png'),
@@ -30,6 +31,7 @@ class Dashboard extends Component {
       markerPosition: null,
       mapCenter: [37.3346, -121.8753],
       items: [],
+      severityData: [],
       error: {}
     }
 
@@ -46,11 +48,35 @@ class Dashboard extends Component {
     let data = [];
     data = await getEvents();
     this.setState({ items: data })
+    const unknown = data.reduce((acc, cur) => cur.severity === "Unknown" ? ++acc : acc, 0)
+    const minor = data.reduce((acc, cur) => cur.severity === "Minor" ? ++acc : acc, 0)
+    const moderate = data.reduce((acc, cur) => cur.severity === "Moderate" ? ++acc : acc, 0)
+    const major = data.reduce((acc, cur) => cur.severity === "Major" ? ++acc : acc, 0)
+    const severityJSON = [
+      {
+        Severity: "Unknown",
+        val: unknown
+      },
+      {
+        Severity: "Minor",
+        val: minor
+      },
+      {
+        Severity: "Moderate",
+        val: moderate
+      },
+      {
+        Severity: "Major",
+        val: major
+      }
+    ]
+    this.setState({ severityData: severityJSON })
   }
 
   handleItemClick = (item) => {
-    const map =this.mapRef.current;
-    this.setState({selectedItem: item,
+    const map = this.mapRef.current;
+    this.setState({
+      selectedItem: item,
       markerPosition: [item.latitude, item.longitude]
     })
     map.setView([item.latitude, item.longitude], map.getZoom())
@@ -74,7 +100,7 @@ class Dashboard extends Component {
   }
 
   render() {
-    const {items, selectedItem, markerPosition, mapCenter} = this.state;
+    const { items, selectedItem, markerPosition, mapCenter } = this.state;
     return (
       <Container fluid className='main-page'>
         <Row className='h-100'>
@@ -86,10 +112,10 @@ class Dashboard extends Component {
               className="mb-3"
             />
             {/* List of road incidents */}
-            <Accordion style={{ overflowY: 'auto', marginBottom: '15px' }}>
+            <Accordion style={{ maxHeight: '750px', overflowY: 'auto', marginBottom: '15px' }}>
               {items.map(item => (
                 <Accordion.Item eventKey={item.id} className='side-bar-content mb-2 p-2' key={item.id} onClick={() => this.handleItemClick(item)}>
-                  <Accordion.Header>{item.eventType}#{item.id}</Accordion.Header>
+                  <Accordion.Header>{item.eventType} #{item.id}</Accordion.Header>
                   <Accordion.Body>{item.headline}</Accordion.Body>
                 </Accordion.Item>
               ))}
@@ -113,13 +139,15 @@ class Dashboard extends Component {
                 url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
                 attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
               />
-              {items.map(item => (
-                <Marker position={[item.latitude, item.longitude]}>
-                <Popup>
-                  {item.subType}
-                </Popup>
-              </Marker>
-              ))}
+              <MarkerClusterGroup>
+                {items.map(item => (
+                  <Marker key={item.id} position={[item.latitude, item.longitude]}>
+                    <Popup>
+                      {item.eventType} #{item.id}. <br /> Type: {item.subType} <br /> Severity: {item.severity} <br /> Latitude: {item.latitude}, Longitude: {item.longitude}.
+                    </Popup>
+                  </Marker>
+                ))}
+              </MarkerClusterGroup>
             </MapContainer>
             <div className='device-details mt-3'>
               <LineChart />
@@ -133,7 +161,7 @@ class Dashboard extends Component {
               <StreamChart />
             </div>
             <div className='device-details mt-3'>
-              <BarChart />
+              <BarChart data={this.state.severityData}/>
             </div>
           </Col>
         </Row>
