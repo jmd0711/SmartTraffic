@@ -25,7 +25,7 @@ public class TrafficEventsProcessing {
         try {
             // Make HTTP GET request to the API
             CloseableHttpClient httpClient = HttpClients.createDefault();
-            HttpGet httpGet = new HttpGet(APIProps.API_URL);
+            HttpGet httpGet = new HttpGet(String.format("http://api.511.org/traffic/events?api_key=%s", APIProps.API_KEY));
             CloseableHttpResponse response = httpClient.execute(httpGet);
 
             // Parse JSON response
