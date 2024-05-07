@@ -1,83 +1,85 @@
 package com.example.backend_Maven.model;
 import jakarta.persistence.*;
 
-
 @Entity
-
 public class Iot {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer id;
-
-    private String eventType;
-
-    private String dataSourceId;
-
-    private String roadNames;
-
-    private String eventStatus;
-
-    private String vehicleImpact;
-
-    private String locationMethod;
+    private Long id;
+    private String district;
+    @Column(name = "county")
+    private String county;
+    private String longitude;
+    private String latitude;
+    private String elevation;
+    private String postmile;
+    private String inService;
 
     public Iot() {
     }
 
-    // Getters and setters
-    public Integer getId() {
+    public Long getId() {
         return id;
     }
 
-    public void setId(Integer id) {
+    public void setId(Long id) {
         this.id = id;
     }
 
-    public String getEventType() {
-        return eventType;
+    public String getDistrict() {
+        return district;
     }
 
-    public void setEventType(String eventType) {
-        this.eventType = eventType;
+    public void setDistrict(String district) {
+        this.district = district;
     }
 
-    public String getDataSourceId() {
-        return dataSourceId;
+    public String getCounty() {
+        return county;
     }
 
-    public void setDataSourceId(String dataSourceId) {
-        this.dataSourceId = dataSourceId;
+    public void setCounty(String county) {
+        this.county = county;
     }
 
-    public String getRoadNames() {
-        return roadNames;
+    public String getLongitude() {
+        return longitude;
     }
 
-    public void setRoadNames(String roadNames) {
-        this.roadNames = roadNames;
+    public void setLongitude(String longitude) {
+        this.longitude = longitude;
     }
 
-    public String getEventStatus() {
-        return eventStatus;
+    public String getLatitude() {
+        return latitude;
     }
 
-    public void setEventStatus(String eventStatus) {
-        this.eventStatus = eventStatus;
+    public void setLatitude(String latitude) {
+        this.latitude = latitude;
     }
 
-    public String getVehicleImpact() {
-        return vehicleImpact;
+    public String getElevation() {
+        return elevation;
     }
 
-    public void setVehicleImpact(String vehicleImpact) {
-        this.vehicleImpact = vehicleImpact;
+    public void setElevation(String elevation) {
+        this.elevation = elevation;
     }
 
-    public String getLocationMethod() {
-        return locationMethod;
+    public String getPostmile() {
+        return postmile;
     }
 
-    public void setLocationMethod(String locationMethod) {
-        this.locationMethod = locationMethod;
+    public void setPostmile(String postmile) {
+        this.postmile = postmile;
+    }
+
+
+    public String getInService() {
+        return inService;
+    }
+
+    public void setInService(String inService) {
+        this.inService = inService;
     }
 }

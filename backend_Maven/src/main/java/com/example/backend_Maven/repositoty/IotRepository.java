@@ -7,25 +7,9 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
-
 @Repository
-
-public interface IotRepository extends JpaRepository<Iot, Integer> {
-    @Query("SELECT i FROM Iot i WHERE " +
-            "(:eventType IS NULL OR i.eventType = :eventType) AND " +
-            "(:dataSourceId IS NULL OR i.dataSourceId = :dataSourceId) AND " +
-            "(:roadNames IS NULL OR i.roadNames LIKE %:roadNames%) AND " +
-            "(:eventStatus IS NULL OR i.eventStatus = :eventStatus)")
-    List<Iot> findByCriteria(@Param("eventType") String eventType,
-                             @Param("dataSourceId") String dataSourceId,
-                             @Param("roadNames") String roadNames,
-                             @Param("eventStatus") String eventStatus);
+public interface IotRepository extends JpaRepository<Iot, Long> {
+    List<Iot> findByCounty(String county);
 }
-
-
-
-
-
-
 
 

@@ -1,5 +1,4 @@
 package com.example.backend_Maven.controller;
-
 import com.example.backend_Maven.model.Iot;
 import com.example.backend_Maven.service.IotService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,70 +13,49 @@ import java.util.Optional;
 @RequestMapping("/iot")
 @CrossOrigin
 public class IotController {
+
     @Autowired
     private IotService iotService;
 
-
-        @GetMapping("/all")
-        public ResponseEntity<List<Iot>> getAllIots() {
-            List<Iot> iots = iotService.findAll();
-            if (iots.isEmpty()) {
-                return ResponseEntity.noContent().build();
-            }
-            return ResponseEntity.ok(iots);
-        }
-
-
     @PostMapping("/add")
-    public ResponseEntity<String> addIot(@RequestBody Iot iot) {
-        iotService.save(iot);
-        return ResponseEntity.ok("New IoT data added");
+    public String add(@RequestBody Iot iot) {
+        iotService.saveIot(iot);
+        return "New IoT entry added";
     }
 
-
+    @GetMapping("/getAll")
+    public List<Iot> list() {
+        return iotService.getAllIot();
+    }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Iot> getIotById(@PathVariable Integer id) {
+    public ResponseEntity<Optional<Iot>> findById(@PathVariable Long id) {
         Optional<Iot> iot = iotService.findById(id);
-        return iot.map(value -> new ResponseEntity<>(value, HttpStatus.OK))
-                .orElseGet(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND));
-    }
-
-    @PutMapping("/update/{id}")
-    public ResponseEntity<String> updateIot(@PathVariable Integer id, @RequestBody Iot iotDetails) {
-        Optional<Iot> iotData = iotService.findById(id);
-        if (iotData.isPresent()) {
-            Iot updatedIot = iotData.get();
-            updatedIot.setEventType(iotDetails.getEventType());
-            updatedIot.setDataSourceId(iotDetails.getDataSourceId());
-            updatedIot.setRoadNames(iotDetails.getRoadNames());
-            updatedIot.setEventStatus(iotDetails.getEventStatus());
-            updatedIot.setVehicleImpact(iotDetails.getVehicleImpact());
-            updatedIot.setLocationMethod(iotDetails.getLocationMethod());
-            iotService.save(updatedIot);
-            return ResponseEntity.ok("IoT data updated successfully");
+        if (iot.isPresent()) {
+            return new ResponseEntity<>(iot, HttpStatus.OK);
         } else {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("IoT Data Not Found");
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
     }
+
     @GetMapping("/search")
-    public ResponseEntity<List<Iot>> searchIots(@RequestParam(required = false) String eventType,
-                                                @RequestParam(required = false) String dataSourceId,
-                                                @RequestParam(required = false) String roadNames,
-                                                @RequestParam(required = false) String eventStatus) {
-        List<Iot> iots = iotService.searchIots(eventType, dataSourceId, roadNames, eventStatus);
+    public ResponseEntity<List<Iot>> findByCounty(@RequestParam(required = false) String county) {
+        List<Iot> iots = iotService.findByCounty(county);
         if (iots.isEmpty()) {
-            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
         return new ResponseEntity<>(iots, HttpStatus.OK);
     }
-    @DeleteMapping("/delete/{id}")
-    public ResponseEntity<HttpStatus> deleteIot(@PathVariable Integer id) {
+
+
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<?> deleteIotEntry(@PathVariable Long id) {
         try {
-            iotService.delete(id);
-            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+            iotService.deleteIotEntry(id);
+            return ResponseEntity.ok().build();
         } catch (Exception e) {
-            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
     }
 }

@@ -1,88 +1,100 @@
 package com.example.backend_Maven;
 
-
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import org.apache.http.client.methods.CloseableHttpResponse;
-import org.apache.http.client.methods.HttpGet;
-import org.apache.http.impl.client.CloseableHttpClient;
-import org.apache.http.impl.client.HttpClients;
-
-import java.io.IOException;
+import org.json.simple.JSONArray;
+import org.json.simple.JSONObject;
+import org.json.simple.parser.JSONParser;
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+import java.net.URL;
+import java.net.URLConnection;
 import java.sql.Connection;
-import java.sql.PreparedStatement;
 import java.sql.DriverManager;
-import java.sql.Statement;
-import java.sql.SQLException;
+import java.sql.PreparedStatement;
 
 public class IotDataProcessing {
-    private static final String API_KEY = "AIzaSyCC0nehjtBB_RPR3LkOOqpniJHZUK9JLqE";
-    private static final String API_AREA_CODE = "5393021";
-    private static final String API_URL = String.format("http://api.511.org/traffic/events?api_key=a54k", API_KEY, API_AREA_CODE);
-    private static final String DB_URL = "jdbc:mysql://localhost:3306/smart-traffic";
-    private static final String DB_USER = "root";
-    private static final String DB_PASSWORD = "";
 
     public static void main(String[] args) {
-        try {
-            // Clear the IoT events table before inserting new data
-            clearIoTEventsTable();
+        JSONParser parser = new JSONParser();
 
-            // Process and insert IoT events data
-            processAndInsertIoTEvents();
-        } catch (IOException | SQLException e) {
-            e.printStackTrace();
-        }
-    }
+        String[] links = {"https://cwwp2.dot.ca.gov/data/d1/cctv/cctvStatusD01.json",
+                "https://cwwp2.dot.ca.gov/data/d2/cctv/cctvStatusD02.json",
+                "https://cwwp2.dot.ca.gov/data/d3/cctv/cctvStatusD03.json",
+                "https://cwwp2.dot.ca.gov/data/d4/cctv/cctvStatusD04.json",
+                "https://cwwp2.dot.ca.gov/data/d5/cctv/cctvStatusD05.json",
+                "https://cwwp2.dot.ca.gov/data/d6/cctv/cctvStatusD06.json",
+                "https://cwwp2.dot.ca.gov/data/d7/cctv/cctvStatusD07.json",
+                "https://cwwp2.dot.ca.gov/data/d8/cctv/cctvStatusD08.json",
+                "https://cwwp2.dot.ca.gov/data/d9/cctv/cctvStatusD09.json",
+                "https://cwwp2.dot.ca.gov/data/d10/cctv/cctvStatusD10.json",
+                "https://cwwp2.dot.ca.gov/data/d11/cctv/cctvStatusD11.json",
+                "https://cwwp2.dot.ca.gov/data/d12/cctv/cctvStatusD12.json"};
 
-    private static void processAndInsertIoTEvents() throws IOException, SQLException {
-        CloseableHttpClient httpClient = HttpClients.createDefault();
-        HttpGet httpGet = new HttpGet(API_URL);
-        try (CloseableHttpResponse response = httpClient.execute(httpGet)) {
-            ObjectMapper objectMapper = new ObjectMapper();
-            JsonNode rootNode = objectMapper.readTree(response.getEntity().getContent());
-            JsonNode eventsArray = rootNode.get("iot");
-
-            try (Connection dbConnection = DriverManager.getConnection(DB_URL, DB_USER, DB_PASSWORD)) {
-                for (JsonNode event : eventsArray) {
-                    String eventType = event.get("event_type").asText();
-                    String dataSourceId = event.get("data_source_id").asText();
-                    String roadNames = event.get("road_names").asText();
-                    String eventStatus = event.get("event_status").asText();
-                    String vehicleImpact = event.path("vehicle_impact").asText(null);
-                    String locationMethod = event.path("location_method").asText(null);
-
-                    String sql = "INSERT INTO iot (event_type, data_source_id, road_names, event_status, vehicle_impact, location_method) VALUES (?, ?, ?, ?, ?, ?)";
-                    try (PreparedStatement pstmt = dbConnection.prepareStatement(sql)) {
-                        pstmt.setString(1, eventType);
-                        pstmt.setString(2, dataSourceId);
-                        pstmt.setString(3, roadNames);
-                        pstmt.setString(4, eventStatus);
-                        pstmt.setString(5, vehicleImpact);
-                        pstmt.setString(6, locationMethod);
-                        pstmt.executeUpdate();
-                    }
+        for (String i : links) {
+            try {
+                // Fetch JSON data from URL
+                URL url = new URL(i);
+                URLConnection conn = url.openConnection();
+                BufferedReader reader = new BufferedReader(new InputStreamReader(conn.getInputStream()));
+                StringBuilder jsonBuilder = new StringBuilder();
+                String line;
+                while ((line = reader.readLine()) != null) {
+                    jsonBuilder.append(line);
                 }
+                reader.close();
+
+                // Parse JSON data
+                Object obj = parser.parse(jsonBuilder.toString());
+                JSONObject jsonObject = (JSONObject) obj;
+                JSONArray data = (JSONArray) jsonObject.get("data");
+
+                // Establish MySQL connection
+                Connection dbConnection = DriverManager.getConnection("jdbc:mysql://localhost:3306/smart-traffic", "root", "");
+
+                // Insert data into MySQL
+                for (Object o : data) {
+                    JSONObject item = (JSONObject) o;
+                    JSONObject cctv = (JSONObject) item.get("cctv");
+
+                    String district = ((JSONObject) cctv.get("location")).get("district").toString();
+                    String county = ((JSONObject) cctv.get("location")).get("county").toString();
+                    String longitude = ((JSONObject) cctv.get("location")).get("longitude").toString();
+                    String latitude = ((JSONObject) cctv.get("location")).get("latitude").toString();
+                    String elevation = ((JSONObject) cctv.get("location")).get("elevation").toString();
+                    String postmile = ((JSONObject) cctv.get("location")).get("postmile").toString();
+                    String inService = (String) cctv.get("inService");
+
+
+                    // Insert into MySQL table
+                    String sql = "INSERT INTO iot ( district,county, longitude, latitude,elevation,postmile, in_service) VALUES (?, ?, ?, ?, ?, ?, ?)";
+                    PreparedStatement pstmt = dbConnection.prepareStatement(sql);
+                    pstmt.setString(1, district);
+                    pstmt.setString(2, county);
+                    pstmt.setString(3, longitude);
+                    pstmt.setString(4, latitude);
+                    pstmt.setString(5, elevation);
+                    pstmt.setString(6, postmile);
+                    pstmt.setString(7, inService);
+
+
+                    pstmt.executeUpdate();
+                }
+
+                dbConnection.close();
+            } catch (Exception e) {
+                e.printStackTrace();
             }
         }
-    }
 
-    private static void clearIoTEventsTable() throws SQLException {
-        try (Connection conn = DriverManager.getConnection(DB_URL, DB_USER, DB_PASSWORD);
-             Statement stmt = conn.createStatement()) {
-            String sql = "TRUNCATE TABLE iot";
-            stmt.executeUpdate(sql);
-        }
     }
 }
-
-// SQL Table Creation for IoT Events
-// CREATE TABLE iot_events (
-//   id INT AUTO_INCREMENT PRIMARY KEY,
-//   event_type VARCHAR(255),
-//   data_source_id VARCHAR(255),
-//   road_names VARCHAR(255),
-//   event_status VARCHAR(255),
-//   vehicle_impact VARCHAR(255),
-//   location_method VARCHAR(255)
-// );
+//CREATE TABLE iot (
+//id INT AUTO_INCREMENT PRIMARY KEY,
+//district VARCHAR(100),
+//county VARCHAR(100),
+//longitude VARCHAR(100),
+//latitude VARCHAR(100),
+//elevation VARCHAR(100),
+//postmile VARCHAR(100),
+//milepost VARCHAR(100),
+//inService VARCHAR(35)
+//);
