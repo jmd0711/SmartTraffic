@@ -5,6 +5,10 @@
     --color4: #ADD8E6;
 }
 
+html {
+    background-color: var(--color2);
+}
+
 .bg-navbar-color {
     background-color: var(--color1);
 }
@@ -15,7 +19,7 @@
 }
 
 .main-page {
-    height: 100vh;
+    height: 94vh;
     background-color: var(--color2);
 }
 
