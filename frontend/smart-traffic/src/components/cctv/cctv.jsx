@@ -53,6 +53,7 @@ class CCTV extends Component {
       showForm: false,
       selectedItem: null // Reset currentItem
     });
+    window.location.reload();
   };
 
   componentDidMount() {
@@ -197,7 +198,7 @@ class CCTV extends Component {
 
     return (
       <Container fluid className='main-page'>
-        <Row className="h-100" style={{ maxHeight: '600px'}}>
+        <Row className="h-100" style={{ maxHeight: '500px'}}>
           <Col md={3} className='side-bar p-3'>
             <h3 className="text-light mb-3">CCTVs</h3>
             {/* <Form.Control
@@ -210,7 +211,7 @@ class CCTV extends Component {
             <Form className="d-flex mb-3" onSubmit={this.handleFilter}>
               <Form.Control
                 type="text"
-                placeholder="CCTV Number/Name"
+                placeholder="CCTV Number/Address"
                 value={this.state.query}
                 onChange={this.handleSearchInputChange}
                 className="me-3"

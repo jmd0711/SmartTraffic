@@ -78,15 +78,15 @@ class PopupForm extends Component {
 
   handleSubmit = e => {
     e.preventDefault();
-    // // Check latitude and longitude input format
-    // if (!this.isValidLatitude(this.state.latitude)) {
-    //   this.setState({isValidLatitude: false });
-    //   return;
-    // }
-    // if (!this.isValidLongitude(this.state.longitude)) {
-    //   this.setState({isValidLongitude: false });
-    //   return;
-    // }
+    // Check latitude and longitude input format
+    if (this.isValidLatitude(this.state.latitude)) {
+      this.setState({isValidLatitude: false });
+      return;
+    }
+    if (this.isValidLongitude(this.state.longitude)) {
+      this.setState({isValidLongitude: false });
+      return;
+    }
     
     this.props.onSubmit(this.state);
     // Reset the form fields after submission
@@ -127,13 +127,6 @@ class PopupForm extends Component {
           <div className="popup">
             <p>{this.props.mode === 'add' ? 'Add CCTV' : ('Update CCTV Information')}</p>
             <form onSubmit={this.handleSubmit}>
-              {/* <input
-                type="text"
-                name="id"
-                placeholder="ID"
-                value={this.state.id}
-                onChange={this.handleChange}
-              /> */}
               <input
                 type="text"
                 name="locationName"
