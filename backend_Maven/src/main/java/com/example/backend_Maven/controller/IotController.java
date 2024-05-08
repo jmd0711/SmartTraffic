@@ -24,8 +24,13 @@ public class IotController {
     }
 
     @GetMapping("/getAll")
-    public List<Iot> list() {
-        return iotService.getAllIot();
+    public ResponseEntity<List<Iot>> list() {
+        List<Iot> iots = iotService.getAllIotLimited();
+        if (!iots.isEmpty()) {
+            return new ResponseEntity<>(iots, HttpStatus.OK);
+        } else {
+            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        }
     }
 
     @GetMapping("/{id}")
@@ -47,6 +52,13 @@ public class IotController {
         return new ResponseEntity<>(iots, HttpStatus.OK);
     }
 
+    @PutMapping("/{id}")
+    public ResponseEntity<String> update(@PathVariable Long id, @RequestBody Iot iot) {
+        if (iotService.updateIotEntry(id, iot)) {
+            return ResponseEntity.ok("IoT entry updated successfully");
+        }
+        return ResponseEntity.notFound().build();
+    }
 
 
     @DeleteMapping("/{id}")

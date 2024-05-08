@@ -1,6 +1,7 @@
 package com.example.backend_Maven.controller;
 
 import com.example.backend_Maven.model.Cctv;
+import com.example.backend_Maven.repositoty.CctvRepository;
 import com.example.backend_Maven.service.CctvService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -16,6 +17,12 @@ import java.util.Optional;
 public class CctvController {
     @Autowired
     private CctvService cctvService;
+    private final CctvRepository cctvRepository;
+
+    @Autowired
+    public CctvController(CctvRepository cctvRepository) {
+        this.cctvRepository = cctvRepository;
+    }
 
     @PostMapping("/add")
     public String add(@RequestBody Cctv cctv){
@@ -52,4 +59,20 @@ public class CctvController {
         }
     }
 
+    @PutMapping("/{id}")
+    public ResponseEntity<Cctv> updateInformation(@PathVariable Integer id, @RequestBody Cctv updatedInformation) {
+        Cctv existingInformation = cctvRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Information not found with id: " + id));
+
+        existingInformation.setLocationName(updatedInformation.getLocationName());
+        existingInformation.setNearbyPlace(updatedInformation.getNearbyPlace());
+        existingInformation.setLongitude(updatedInformation.getLongitude());
+        existingInformation.setLatitude(updatedInformation.getLatitude());
+        existingInformation.setInService(updatedInformation.getInService());
+        existingInformation.setVideoUrl(updatedInformation.getVideoUrl());
+        existingInformation.setImageUrl(updatedInformation.getImageUrl());
+
+        Cctv savedInformation = cctvRepository.save(existingInformation);
+        return new ResponseEntity<>(savedInformation, HttpStatus.OK);
+    }
 }
