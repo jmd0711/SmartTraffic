@@ -219,7 +219,7 @@ class IOT extends Component {
               <Button variant="primary" type="submit">Filter</Button>
             </Form>
             {/* List of Stations */}
-            <div style={{ maxHeight: '350px', overflowY: 'auto', marginBottom: '15px'}}>
+            <div style={{ maxHeight: '470px', overflowY: 'auto', marginBottom: '15px'}}>
             {items.map(item => (
               <div className='side-bar-content mb-2 p-2' key={item.id} onClick={() => this.handleItemClick(item)}>
               Station#{item.id}
