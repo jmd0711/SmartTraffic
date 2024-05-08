@@ -2,6 +2,7 @@ import React, { Component, useEffect, useState } from 'react';
 import { withRouter } from "../withrouter";
 import axios from 'axios';
 import { Container, Row, Col, Form, Button } from 'react-bootstrap';
+import InformationService from './InformationService';
 
 class PopupForm extends Component {
   constructor(props) {
@@ -15,15 +16,38 @@ class PopupForm extends Component {
       latitude: '',
       elevation: '',
       postmile: '',
-      inService: ''
+      inService: '',
+      isValidLatitude: true,
+      isValidLongitude: true,
     };
   }
 
-  toggleForm = () => {
-    this.setState(prevState => ({
-      showForm: !prevState.showForm
-    }));
-  };
+ 
+
+  componentDidMount() {
+    console.log("here1");
+    if (this.props.selectedItem) {
+      console.log("here3");
+      // Fetch existing data for editing based on itemId prop
+      fetch(`http://localhost:8080/iot/${this.props.selectedItem.id}`)
+        .then(response => response.json())
+        .then(data => {
+          // Update state with fetched data
+          this.setState({
+            district: data.district,
+            county: data.county,
+            longitude: data.longitude,
+            latitude: data.latitude,
+            elevation: data.elevation,
+            postmile: data.postmile,
+            inService: data.inService,
+          });
+          console.log("here2");
+        })
+        .catch(error => console.error('Error fetching data:', error));
+    }
+    console.log("here");
+  }
 
   handleChange = e => {
     this.setState({
@@ -31,74 +55,70 @@ class PopupForm extends Component {
     });
   };
 
+
   handleCancel = () => {
     this.toggleForm();
     window.location.reload();
   };
 
-  handleSubmit = async (e) => {
+
+  handleSubmit = e => {
     e.preventDefault();
-    const {district, county, longitude, latitude, elevation, postmile, inService } = this.state;
-    
-    try {
-      const response = await fetch('http://localhost:8080/iot/add', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          district,
-          county,
-          longitude,
-          latitude,
-          elevation,
-          postmile,
-          inService
-        }),
-      });
   
-      if (response.ok) {
-        console.log('Form data sent successfully');
-        // Reset form fields and close the form
-        this.setState({
-          showForm: false,
-          // id: '',
-          district: '',
-          county: '',
-          longitude: '',
-          latitude: '',
-          elevation: '',
-          postmile: '',
-          inService: ''
-        });
-      } else {
-        console.error('Failed to send form data');
-      }
-    } catch (error) {
-      console.error('Error sending form data:', error);
-    }
-    this.setState(prevState => ({
-      showForm: !prevState.showForm
-    }));
-    window.location.reload()
+    
+    this.props.onSubmit(this.state);
+    // Reset the form fields after submission
+    this.setState({
+      showForm: false,
+      district: '',
+      county: '',
+      longitude: '',
+      latitude: '',
+      elevation: '',
+      postmile: '',
+      inService: ''
+    });
+    this.props.onClose();
+  };
+
+  // toggleForm = (mode, itemId = null) => {
+  //   this.setState(prevState => ({
+  //     showForm: !prevState.showForm,
+  //   }));
+  // };
+
+  isValidLatitude = (latitude) => {
+    const pattern = /^-?([1-8]?[1-9]|[1-9]0)\.{1}\d{1,6}$/;
+    return pattern.test(latitude);
+  };
+
+  isValidLongitude = (longitude) => {
+    const pattern = /^-?((1[0-7]|[1-9]?)[0-9]\.{1}\d{1,6}|180\.{1}0{1,6})$/;
+    return pattern.test(longitude);
   };
   
 
   render() {
     return (
       <div className='device-details p-3 mt-3' style={{ marginBottom: '15px'}}>
-        {/* <button onClick={this.toggleForm}>Open Form</button> */}
         {this.state.showForm || (
           <div className="popup">
-            <p>Add Camera</p>
+            <p>{this.props.mode === 'add' ? 'Add Camera' : ('Update Camera Information')}</p>
             <form onSubmit={this.handleSubmit}>
-             
+              {/* <input
+                type="text"
+                name="id"
+                placeholder="ID"
+                value={this.state.id}
+                onChange={this.handleChange}
+              /> */}
               <input
                 type="text"
                 name="district"
                 placeholder="District"
                 value={this.state.district}
                 onChange={this.handleChange}
+                required
               />
               <input
                 type="text"
@@ -106,6 +126,7 @@ class PopupForm extends Component {
                 placeholder="County"
                 value={this.state.county}
                 onChange={this.handleChange}
+                required
               />
               <input
                 type="text"
@@ -113,27 +134,37 @@ class PopupForm extends Component {
                 placeholder="Longitude"
                 value={this.state.longitude}
                 onChange={this.handleChange}
+                required
               />
+              {!this.isValidLongitude && (
+                <div className="error-message">Please enter a valid Longitude.</div>
+              )}
               <input
                 type="text"
                 name="latitude"
                 placeholder="Latitude"
                 value={this.state.latitude}
                 onChange={this.handleChange}
+                required
               />
+              {!this.isValidLatitude && (
+                <div className="error-message">Please enter a valid Latitude.</div>
+              )}
               <input
                 type="text"
-                name="elavtion"
-                placeholder="elevation"
+                name="elevation"
+                placeholder="Elevation"
                 value={this.state.elevation}
                 onChange={this.handleChange}
+                required
               />
-              <input
+               <input
                 type="text"
                 name="postmiles"
                 placeholder="PostMiles"
                 value={this.state.postmiles}
                 onChange={this.handleChange}
+                required
               />
               <input
                 type="text"
@@ -141,13 +172,16 @@ class PopupForm extends Component {
                 placeholder="In Service"
                 value={this.state.inService}
                 onChange={this.handleChange}
+                required
               />
+              
               <div>
-                <Button onClick={this.handleCancel} variant="danger" style={{ marginLeft: '405px'}} type="submit">
-                Cancel
-                </Button>
-                <Button variant="primary" style={{ marginLeft: '15px'}} type="submit">
+                {/* <Button variant="primary" style={{ marginLeft: '15px'}} type="submit">
                 Submit
+                </Button> */}
+                <Button variant="primary" style={{ marginLeft: '400px'}} type="submit">{this.props.mode === 'add' ? 'Add' : 'Update'}</Button>
+                <Button onClick={this.handleCancel} variant="danger" style={{ marginLeft: '15px'}} type="submit">
+                Cancel
                 </Button>
               </div>
             </form>
