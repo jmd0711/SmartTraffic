@@ -24,6 +24,8 @@ class CCTV extends Component {
     this.state = {
       selectedItem: null,
       markerPosition: null,
+      mode: 'add',
+      itemId: null,
       showMessage1: false,
       showMessage2: false,
       mapCenter: [37.7749, -122.4194],
@@ -38,10 +40,19 @@ class CCTV extends Component {
     this.handleSearch = this.handleSearch.bind(this)
   };
 
-  toggleForm = () => {
+  toggleForm = (mode, itemId = null) => {
     this.setState(prevState => ({
-      showForm: !prevState.showForm
+      showForm: !prevState.showForm,
+      mode: mode,
+      itemId: itemId
     }));
+  };
+
+  handleCloseForm = () => {
+    this.setState({
+      showForm: false,
+      selectedItem: null // Reset currentItem
+    });
   };
 
   componentDidMount() {
@@ -105,11 +116,57 @@ class CCTV extends Component {
   };
 
   handleAddButtonClick = () => {
-    this.setState({ showMessage1: true });
-    setTimeout(() => {
-      this.setState({ showMessage1: false });
-    }, 5000); // 10 seconds
-    // setShowPopup(true);
+    this.toggleForm('add');
+  };
+
+  handleChangeButtonClick = (itemId) => {
+    this.toggleForm('change', itemId);
+  };
+
+  handleFormSubmit = (formData) => {
+    if (this.state.mode === 'add') {
+      this.addNewInformation(formData);
+    } else if (this.state.mode === 'change') {
+      this.updateInformation(this.state.itemId, formData);
+    }
+  };
+
+  addNewInformation = (formData) => {
+    fetch('http://localhost:8080/cctv/add', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(formData)
+    })
+    .then(response => {
+      if (!response.ok) {
+        throw new Error('Failed to add new information');
+      }
+      console.log('New information added successfully');
+    })
+    .catch(error => {
+      console.error('Error adding new information:', error);
+    });
+  };
+
+  updateInformation = (itemId, formData) => {
+    fetch(`http://localhost:8080/cctv/${itemId}`, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(formData)
+    })
+    .then(response => {
+      if (!response.ok) {
+        throw new Error('Failed to update information');
+      }
+      console.log('Information updated successfully');
+    })
+    .catch(error => {
+      console.error('Error updating information:', error);
+    });
   };
 
   handleDelete = () => {
@@ -171,7 +228,7 @@ class CCTV extends Component {
             </div>
             {this.state.showMessage1 && <p style={{ color: 'white' }}>CCTV Successfully Added!</p>}
             <div className="d-flex justify-content-end">
-              {admin && <Button onClick={this.toggleForm} variant="primary" type="submit" style={{ maxHeight: '400px', overflowY: 'auto'}}>
+              {admin && <Button onClick={this.handleAddButtonClick} variant="primary" type="submit" style={{ maxHeight: '400px', overflowY: 'auto'}}>
                 Add CCTV
               </Button>}
               {!admin && null}
@@ -190,7 +247,7 @@ class CCTV extends Component {
               />
               <Button variant="primary" type="submit">Search</Button>
             </Form>
-            {this.state.showForm && <PopupForm />}
+            {this.state.showForm && <PopupForm mode={this.state.mode} onSubmit={this.handleFormSubmit} onClose={this.handleCloseForm} />}
             <MapContainer center={mapCenter} zoom={13} ref={this.mapRef}>
               <TileLayer
                 url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
@@ -235,8 +292,8 @@ class CCTV extends Component {
                 <div className='mt-auto'>
                 {admin && 
                   <div>
-                    <Button variant="primary" type="submit">
-                      Update
+                    <Button onClick={() => this.handleChangeButtonClick(selectedItem.id)} variant="primary" type="submit">
+                      Update 
                     </Button>
                     <Button onClick={this.handleDelete} className="ms-2" variant="danger" type="submit">
                       Delete

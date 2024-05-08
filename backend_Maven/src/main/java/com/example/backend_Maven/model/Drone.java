@@ -21,7 +21,8 @@ public class Drone {
     private Integer id;
     @Column(name = "location_name")
     private String locationName;
-    private String nearby_place;
+    @Column(name = "nearby_place")
+    private String nearbyPlace;
     private String longitude;
     private String latitude;
     private String inService;
@@ -47,12 +48,12 @@ public class Drone {
         this.locationName = locationName;
     }
 
-    public String getNearby_place() {
-        return nearby_place;
+    public String getNearbyPlace() {
+        return nearbyPlace;
     }
 
-    public void setNearby_place(String nearby_place) {
-        this.nearby_place = nearby_place;
+    public void setNearbyPlace(String nearbyPlace) {
+        this.nearbyPlace = nearbyPlace;
     }
 
     public String getLongitude() {
