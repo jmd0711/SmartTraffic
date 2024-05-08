@@ -1,6 +1,7 @@
 package com.example.backend_Maven.controller;
 
 import com.example.backend_Maven.model.Drone;
+import com.example.backend_Maven.repositoty.DroneRepository;
 import com.example.backend_Maven.service.DroneService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -16,6 +17,12 @@ import java.util.Optional;
 public class DroneController {
     @Autowired
     private DroneService droneService;
+    private final DroneRepository droneRepository;
+
+    @Autowired
+    public DroneController(DroneRepository droneRepository) {
+        this.droneRepository = droneRepository;
+    }
 
     @PostMapping("/add")
     public String add(@RequestBody Drone drone){
@@ -52,4 +59,20 @@ public class DroneController {
         }
     }
 
+    @PutMapping("/{id}")
+    public ResponseEntity<Drone> updateInformation(@PathVariable Integer id, @RequestBody Drone updatedInformation) {
+        Drone existingInformation = droneRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Information not found with id: " + id));
+
+        existingInformation.setLocationName(updatedInformation.getLocationName());
+        existingInformation.setNearbyPlace(updatedInformation.getNearbyPlace());
+        existingInformation.setLongitude(updatedInformation.getLongitude());
+        existingInformation.setLatitude(updatedInformation.getLatitude());
+        existingInformation.setInService(updatedInformation.getInService());
+        existingInformation.setVideoUrl(updatedInformation.getVideoUrl());
+        existingInformation.setImageUrl(updatedInformation.getImageUrl());
+
+        Drone savedInformation = droneRepository.save(existingInformation);
+        return new ResponseEntity<>(savedInformation, HttpStatus.OK);
+    }
 }

@@ -103,11 +103,11 @@ class PopupForm extends Component {
     this.props.onClose();
   };
 
-  // toggleForm = (mode, itemId = null) => {
-  //   this.setState(prevState => ({
-  //     showForm: !prevState.showForm,
-  //   }));
-  // };
+  toggleForm = (mode, itemId = null) => {
+    this.setState(prevState => ({
+      showForm: !prevState.showForm,
+    }));
+  };
 
   isValidLatitude = (latitude) => {
     const pattern = /^-?([1-8]?[1-9]|[1-9]0)\.{1}\d{1,6}$/;
