@@ -29,7 +29,7 @@ class PopupForm extends Component {
     if (this.props.selectedItem) {
       console.log("here3");
       // Fetch existing data for editing based on itemId prop
-      fetch(`http://localhost:8080/iot/${this.props.selectedItem.id}`)
+      fetch(`http://54.215.68.185:8080/iot/${this.props.selectedItem.id}`)
         .then(response => response.json())
         .then(data => {
           // Update state with fetched data

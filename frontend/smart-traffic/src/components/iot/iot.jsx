@@ -62,7 +62,7 @@ class IOT extends Component {
 
   fetchIotEvents = () => {
     // Fetch iot entries from the server
-    fetch('http://localhost:8080/iot/getAll')
+    fetch('http://54.215.68.185:8080/iot/getAll')
       .then(response => response.json())
       .then(data => this.setState({ items: data }))
       .catch(error => console.log('Error fetching data:', error));
@@ -94,7 +94,7 @@ class IOT extends Component {
     event.preventDefault();
     const { query } = this.state;
 
-    axios.get(`http://localhost:8080/iot/search?county=${query}&id=${parseInt(query.replace( /[^\d.]/g, '' ))}`)
+    axios.get(`http://54.215.68.185:8080/iot/search?county=${query}&id=${parseInt(query.replace( /[^\d.]/g, '' ))}`)
       .then(response => {
         this.setState({ items: response.data });
       })
@@ -132,7 +132,7 @@ class IOT extends Component {
   };
 
   addNewInformation = (formData) => {
-    fetch('http://localhost:8080/iot/add', {
+    fetch('http://54.215.68.185:8080/iot/add', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json'
@@ -151,7 +151,7 @@ class IOT extends Component {
   };
 
   updateInformation = (itemId, formData) => {
-    fetch(`http://localhost:8080/iot/${itemId}`, {
+    fetch(`http://54.215.68.185:8080/iot/${itemId}`, {
       method: 'PUT',
       headers: {
         'Content-Type': 'application/json'
@@ -173,7 +173,7 @@ class IOT extends Component {
       const { selectedItem } = this.state;
       if (selectedItem) {
         // Delete the selected Camera entry
-        axios.delete(`http://localhost:8080/iot/${selectedItem.id}`)
+        axios.delete(`http://54.215.68.185:8080/iot/${selectedItem.id}`)
           .then(response => {
             // Refresh iot entries after deletion
             this.fetchIotEvents();

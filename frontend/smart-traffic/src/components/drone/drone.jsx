@@ -61,7 +61,7 @@ class Drone extends Component {
 
   fetchDroneEntries = () => {
     // Fetch Drone entries from the server
-    fetch('http://localhost:8080/drone/getAll')
+    fetch('http://54.215.68.185:8080/drone/getAll')
       .then(response => response.json())
       .then(data => this.setState({ items: data }))
       .catch(error => console.log('Error fetching data:', error));
@@ -109,7 +109,7 @@ class Drone extends Component {
     event.preventDefault();
     const { query } = this.state;
 
-    axios.get(`http://localhost:8080/drone/search?locationName=${query}&id=${parseInt(query.replace( /[^\d.]/g, '' ))}`)
+    axios.get(`http://54.215.68.185:8080/drone/search?locationName=${query}&id=${parseInt(query.replace( /[^\d.]/g, '' ))}`)
       .then(response => {
         this.setState({ items: response.data });
       })
@@ -153,7 +153,7 @@ class Drone extends Component {
   };
 
   addNewInformation = (formData) => {
-    fetch('http://localhost:8080/drone/add', {
+    fetch('http://54.215.68.185:8080/drone/add', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json'
@@ -172,7 +172,7 @@ class Drone extends Component {
   };
 
   updateInformation = (itemId, formData) => {
-    fetch(`http://localhost:8080/drone/${itemId}`, {
+    fetch(`http://54.215.68.185:8080/drone/${itemId}`, {
       method: 'PUT',
       headers: {
         'Content-Type': 'application/json'
@@ -195,7 +195,7 @@ class Drone extends Component {
       const { selectedItem } = this.state;
       if (selectedItem) {
         // Delete the selected drone entry
-        axios.delete(`http://localhost:8080/drone/${selectedItem.id}`)
+        axios.delete(`http://54.215.68.185:8080/drone/${selectedItem.id}`)
           .then(response => {
             // Refresh Drone entries after deletion
             this.fetchDroneEntries();

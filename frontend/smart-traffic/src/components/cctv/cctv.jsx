@@ -61,7 +61,7 @@ class CCTV extends Component {
 
   fetchCCTVEntries = () => {
     // Fetch CCTV entries from the server
-    fetch('http://localhost:8080/cctv/getAll')
+    fetch('http://54.215.68.185:8080/cctv/getAll')
       .then(response => response.json())
       .then(data => this.setState({ items: data }))
       .catch(error => console.log('Error fetching data:', error));
@@ -93,7 +93,7 @@ class CCTV extends Component {
     event.preventDefault();
     const { query } = this.state;
 
-    axios.get(`http://localhost:8080/cctv/search?locationName=${query}&id=${parseInt(query.replace( /[^\d.]/g, '' ))}`)
+    axios.get(`http://54.215.68.185:8080/cctv/search?locationName=${query}&id=${parseInt(query.replace( /[^\d.]/g, '' ))}`)
       .then(response => {
         this.setState({ items: response.data });
       })
@@ -132,7 +132,7 @@ class CCTV extends Component {
   };
 
   addNewInformation = (formData) => {
-    fetch('http://localhost:8080/cctv/add', {
+    fetch('http://54.215.68.185:8080/cctv/add', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json'
@@ -151,7 +151,7 @@ class CCTV extends Component {
   };
 
   updateInformation = (itemId, formData) => {
-    fetch(`http://localhost:8080/cctv/${itemId}`, {
+    fetch(`http://54.215.68.185:8080/cctv/${itemId}`, {
       method: 'PUT',
       headers: {
         'Content-Type': 'application/json'
@@ -173,7 +173,7 @@ class CCTV extends Component {
       const { selectedItem } = this.state;
       if (selectedItem) {
         // Delete the selected CCTV entry
-        axios.delete(`http://localhost:8080/cctv/${selectedItem.id}`)
+        axios.delete(`http://54.215.68.185:8080/cctv/${selectedItem.id}`)
           .then(response => {
             // Refresh CCTV entries after deletion
             this.fetchCCTVEntries();

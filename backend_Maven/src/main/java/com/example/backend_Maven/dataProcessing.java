@@ -48,7 +48,7 @@ public class dataProcessing {
                 JSONArray data = (JSONArray) jsonObject.get("data");
 
                 // Establish MySQL connection
-                Connection dbConnection = DriverManager.getConnection("jdbc:mysql://localhost:3306/smart-traffic", "root", "");
+                Connection dbConnection = DriverManager.getConnection("jdbc:mysql://localhost:3306/smart_traffic", "root", "pass");
 
                 // Insert data into MySQL
                 for (Object o : data) {

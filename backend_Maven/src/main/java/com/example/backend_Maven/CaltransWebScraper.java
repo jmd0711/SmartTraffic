@@ -23,7 +23,7 @@ public class CaltransWebScraper {
             Elements rows = table.select("tr");
 
             // Connect to MySQL database
-            conn = DriverManager.getConnection("jdbc:mysql://localhost:3306/smart-traffic", "root", "");
+            conn = DriverManager.getConnection("jdbc:mysql://localhost:3306/smart_traffic", "root", "pass");
 
             // Process each row of the table (skipping the header row)
             for (int i = 1; i < rows.size(); i++) {

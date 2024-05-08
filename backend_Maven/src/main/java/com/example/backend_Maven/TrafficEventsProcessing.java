@@ -17,9 +17,9 @@ import java.sql.Statement;
 import java.sql.SQLException;
 
 public class TrafficEventsProcessing {
-    private static final String DB_URL = "jdbc:mysql://localhost:3306/smart-traffic";
+    private static final String DB_URL = "jdbc:mysql://localhost:3306/smart_traffic";
     private static final String DB_USER = "root";
-    private static final String DB_PASSWORD = "";
+    private static final String DB_PASSWORD = "pass";
 
     public static void main(String[] args) {
         try {

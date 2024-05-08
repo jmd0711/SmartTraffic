@@ -1,7 +1,7 @@
 
 class InformationService {
     static addInformation(newData) {
-      return fetch(`http://localhost:8080/iot/add`, {
+      return fetch(`http://54.215.68.185:8080/iot/add`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
@@ -23,7 +23,7 @@ class InformationService {
     }
   
     static updateInformation(itemId, updatedData) {
-      return fetch(`http://localhost:8080/iot/${itemId}`, {
+      return fetch(`http://54.215.68.185:8080/iot/${itemId}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json'

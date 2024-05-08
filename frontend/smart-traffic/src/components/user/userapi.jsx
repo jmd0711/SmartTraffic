@@ -1,6 +1,6 @@
 import axios from "axios"
 
-const apiURL = "http://localhost:8080/"
+const apiURL = "http://54.215.68.185:8080/"
 
 export const signup = (newUser) => {
   return axios

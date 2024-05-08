@@ -14,6 +14,7 @@ public class StartupRunner implements CommandLineRunner {
     public void run(String... args) throws Exception {
         databaseService.truncateTable("cctv");
         databaseService.truncateTable("event");
+        databaseService.truncateTable("iot");
         databaseService.runAnotherJavaProgram();
     }
 }

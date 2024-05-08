@@ -1,6 +1,6 @@
 import axios from "axios"
 
-const apiURL = "http://localhost:8080/"
+const apiURL = "http://54.215.68.185:8080/"
 
 export const getEvents = async () => {
     return axios
@@ -12,7 +12,7 @@ export const getEvents = async () => {
 }
 export const searchEvents = async (query) => {
     return axios
-        .get(`http://localhost:8080/event/search?locationName=${query}&id=${parseInt(query.replace(/[^\d.]/g, ''))}`)
+        .get(`apiURL + "event/search?locationName=${query}&id=${parseInt(query.replace(/[^\d.]/g, ''))}`)
         .then((res) => {
             console.log(res);
             return res.data;

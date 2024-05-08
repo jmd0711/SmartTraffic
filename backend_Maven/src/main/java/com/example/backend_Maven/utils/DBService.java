@@ -1,5 +1,6 @@
 package com.example.backend_Maven.utils;
 
+import com.example.backend_Maven.IotDataProcessing;
 import com.example.backend_Maven.TrafficEventsProcessing;
 import com.example.backend_Maven.dataProcessing;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,5 +22,6 @@ public class DBService {
         // Call the main method of the other Java program
         dataProcessing.main(new String[] {});
         TrafficEventsProcessing.main(new String[] {});
+        IotDataProcessing.main(new String[] {});
     }
 }
