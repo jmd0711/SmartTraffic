@@ -220,7 +220,7 @@ class Drone extends Component {
 
     return (
       <Container fluid className='main-page'>
-        <Row className="h-100" style={{ maxHeight: '800px'}}>
+        <Row className="h-100" style={{ maxHeight: '600px'}}>
           <Col md={3} className='side-bar p-3'>
             <h3 className="text-light mb-3">Drones</h3>
             {/*<Form.Control
@@ -240,7 +240,7 @@ class Drone extends Component {
              />
              <Button variant="primary" type="submit">Filter</Button>
            </Form>             
-            <div style={{ maxHeight: '800px', overflowY: 'auto', marginBottom: '15px'}}>
+            <div style={{ maxHeight: '600px', overflowY: 'auto', marginBottom: '15px'}}>
             {items.map(item => (
               <div className='side-bar-content mb-2 p-2' key={item.id} onClick={() => this.handleItemClick(item)}>
                 Drone #{item.id}
