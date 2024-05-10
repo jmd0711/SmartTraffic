@@ -12,7 +12,7 @@ import StreamChart from './streamchart'
 import '../geocodeapi';
 import './eventapi';
 import { fromAddress } from 'react-geocode';
-import { getEvents, searchEvents } from './eventapi';
+import { getCCTVs, getDrones, getEvents, getIoTs, searchEvents } from './eventapi';
 import MarkerClusterGroup from 'react-leaflet-cluster';
 delete L.Icon.Default.prototype._getIconUrl;
 L.Icon.Default.mergeOptions({
@@ -32,6 +32,7 @@ class Dashboard extends Component {
       mapCenter: [37.3346, -121.8753],
       items: [],
       severityData: [],
+      serviceData: [],
       error: {}
     }
 
@@ -42,6 +43,7 @@ class Dashboard extends Component {
 
   componentDidMount() {
     this.getEventData();
+    this.getDeviceData();
   }
 
   getEventData = async () => {
@@ -71,6 +73,61 @@ class Dashboard extends Component {
       }
     ]
     this.setState({ severityData: severityJSON })
+  }
+
+  getDeviceData = async () => {
+    let data = []
+    data = await getCCTVs()
+    const cctvIn = data.reduce((acc, cur) => cur.inService === "true" ? ++acc : acc, 0)
+    const cctvOut = data.length - cctvIn
+    data = await getDrones()
+    const droneIn = data.reduce((acc, cur) => cur.inService === "true" ? ++acc : acc, 0)
+    const droneOut = data.length - droneIn
+    data = await getIoTs()
+    const iotIn = data.reduce((acc, cur) => cur.inService === "true" ? ++acc : acc, 0)
+    const iotOut = data.length - iotIn
+    const serviceJSON = [
+      {
+        "id": "CCTVs",
+        "data": [
+          {
+            "x": "Available",
+            "y": cctvIn
+          },
+          {
+            "x": "Unavailable",
+            "y": cctvOut
+          }
+        ]
+      },
+      {
+        "id": "Drones",
+        "data": [
+          {
+            "x": "Available",
+            "y": droneIn
+          },
+          {
+            "x": "Unavailable",
+            "y": droneOut
+          }
+        ]
+      },
+      {
+        "id": "IoTs",
+        "data": [
+          {
+            "x": "Available",
+            "y": iotIn
+          },
+          {
+            "x": "Unavailable",
+            "y": iotOut
+          }
+        ]
+      }
+    ]
+    this.setState({ serviceData: serviceJSON })
   }
 
   handleItemClick = (item) => {
@@ -186,7 +243,7 @@ class Dashboard extends Component {
           </Col>
           <Col md={3} className='side-bar d-flex flex-column p-3 ms-3 me-3'>
             <div className='device-details mt-3'>
-              <RadialBarChart />
+              <RadialBarChart data={this.state.serviceData}/>
             </div>
             <div className='device-details mt-3'>
               <StreamChart />

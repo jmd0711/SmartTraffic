@@ -21,3 +21,30 @@ export const searchEvents = async (query) => {
             console.error('Error fetching search results:', error);
         });
 }
+
+export const getCCTVs = async () => {
+    return axios
+        .get(apiURL + "cctv/getAll")
+        .then((res) => {
+            return res.data;
+        })
+        .catch((err) => console.log(err));
+}
+
+export const getDrones = async () => {
+    return axios
+        .get(apiURL + "drone/getAll")
+        .then((res) => {
+            return res.data;
+        })
+        .catch((err) => console.log(err));
+}
+
+export const getIoTs = async () => {
+    return axios
+        .get(apiURL + "iot/getAll")
+        .then((res) => {
+            return res.data;
+        })
+        .catch((err) => console.log(err));
+}

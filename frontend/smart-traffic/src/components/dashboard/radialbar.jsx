@@ -6,10 +6,10 @@ import { ResponsiveRadialBar } from '@nivo/radial-bar'
 
 class RadialBarChart extends Component {
   render() {
-    const d = require('./radialsample.json')
+    //const d = require('./radialsample.json')
     return (
       <ResponsiveRadialBar
-        data={d}
+        data={this.props.data}
         valueFormat=">-.2f"
         padding={0.4}
         cornerRadius={2}
