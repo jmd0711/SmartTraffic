@@ -57,6 +57,7 @@ class CCTV extends Component {
 
   componentDidMount() {
     this.fetchCCTVEntries();
+    this.setState({admin: typeof localStorage.userToken === "string"})
   };
 
   fetchCCTVEntries = () => {

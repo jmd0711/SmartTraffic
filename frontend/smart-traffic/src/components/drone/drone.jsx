@@ -57,6 +57,7 @@ class Drone extends Component {
 
   componentDidMount() {
     this.fetchDroneEntries();
+    this.setState({admin: typeof localStorage.userToken === "string"})
   }
 
   fetchDroneEntries = () => {

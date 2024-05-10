@@ -57,7 +57,7 @@ class IOT extends Component {
 
   componentDidMount() {
     this.fetchIotEvents();
-    
+    this.setState({admin: typeof localStorage.userToken === "string"})
   };
 
   fetchIotEvents = () => {
