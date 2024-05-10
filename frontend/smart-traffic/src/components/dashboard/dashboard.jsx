@@ -12,7 +12,7 @@ import StreamChart from './streamchart'
 import '../geocodeapi';
 import './eventapi';
 import { fromAddress } from 'react-geocode';
-import { getCCTVs, getDrones, getEvents, getIoTs, searchEvents } from './eventapi';
+import { getCCTVs, getDrones, getEvents, getForecast, getIoTs, searchEvents } from './eventapi';
 import MarkerClusterGroup from 'react-leaflet-cluster';
 delete L.Icon.Default.prototype._getIconUrl;
 L.Icon.Default.mergeOptions({
@@ -33,6 +33,7 @@ class Dashboard extends Component {
       items: [],
       severityData: [],
       serviceData: [],
+      weatherData: {},
       error: {}
     }
 
@@ -44,6 +45,7 @@ class Dashboard extends Component {
   componentDidMount() {
     this.getEventData();
     this.getDeviceData();
+    this.updateWeather(this.state.mapCenter[0], this.state.mapCenter[1]);
   }
 
   getEventData = async () => {
@@ -130,6 +132,12 @@ class Dashboard extends Component {
     this.setState({ serviceData: serviceJSON })
   }
 
+  updateWeather = async (lat, lng) => {
+    let weatherJSON = {}
+    weatherJSON = await getForecast(lat, lng)
+    this.setState({ weatherData: weatherJSON })
+  }
+
   handleItemClick = (item) => {
     const map = this.mapRef.current;
     this.setState({
@@ -137,6 +145,7 @@ class Dashboard extends Component {
       markerPosition: [item.latitude, item.longitude]
     })
     map.setView([item.latitude, item.longitude], map.getZoom())
+    this.updateWeather(item.latitude, item.longitude)
   }
 
   handleSearch = (e) => {
@@ -148,6 +157,7 @@ class Dashboard extends Component {
         const { lat, lng } = results[0].geometry.location
         const map = this.mapRef.current
         map.setView([lat, lng], map.getZoom())
+        this.updateWeather(lat, lng)
       })
       .catch(console.error)
   };
@@ -242,11 +252,14 @@ class Dashboard extends Component {
             </div>
           </Col>
           <Col md={3} className='side-bar d-flex flex-column p-3 ms-3 me-3'>
-            <div className='device-details mt-3'>
-              <RadialBarChart data={this.state.serviceData}/>
+            <div className='device-details p-3 mt-3' style={{ height: '250px', maxHeight: '250px', overflowY: 'auto'}}>
+              <strong>Weather Forecast <br /></strong>
+              {this.state.weatherData.detailedForecast} <br />
+              Temperature: {this.state.weatherData.temperature}°{this.state.weatherData.temperatureUnit} <br />
+              Wind Speed: {this.state.weatherData.windSpeed} {this.state.weatherData.windDirection}
             </div>
             <div className='device-details mt-3'>
-              <StreamChart />
+              <RadialBarChart data={this.state.serviceData} />
             </div>
             <div className='device-details mt-3'>
               <BarChart data={this.state.severityData} />

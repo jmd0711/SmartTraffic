@@ -48,3 +48,20 @@ export const getIoTs = async () => {
         })
         .catch((err) => console.log(err));
 }
+
+// Weather API
+
+export const getForecast = async (lat, lng) => {
+    const url = await axios.get("https://api.weather.gov/points/" + lat + ',' + lng)
+    const data = await getWeatherData(url.data.properties.forecast)
+    return data
+}
+
+const getWeatherData = async (url) => {
+    return axios
+        .get(url)
+        .then((res) => {
+            return res.data.properties.periods[0]
+        })
+        .catch((err) => console.log(err))
+}
